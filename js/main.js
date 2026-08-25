@@ -818,7 +818,53 @@
 
   /* ----------------------------------------------------------
      KARUSELY — galéria + kroky prenájmu (v02)
+
+     Posun rieši jedna funkcia, aby drag aj šípky dojazdovali rovnako.
+     glide() nepoužíva scrollBehavior:"smooth" (krivku určuje prehliadač
+     a mení sa s dĺžkou cesty), ale vlastný rAF s krivkou webu.
      ---------------------------------------------------------- */
+  const EASE_OUT = (t) => 1 - Math.pow(1 - t, 3);        // cubic-out, ako --ease-soft
+
+  /* Dojazd podľa rýchlosti gesta — exponenciálny útlm, rovnako ako
+     zotrvačnosť natívneho scrollu. v je v px/s. */
+  const project = (v, deceleration = 0.998) =>
+    (v / 1000) * deceleration / (1 - deceleration);
+
+  /* Plynulý posun na cieľ; vráti funkciu na prerušenie, aby sa dal
+     dojazd kedykoľvek chytiť a prekryť novým gestom. */
+  function glide(el, to, duration = 420) {
+    const from = el.scrollLeft;
+    const dist = to - from;
+    if (Math.abs(dist) < 1) return () => {};
+    let raf = 0, cancelled = false;
+    const t0 = performance.now();
+    const step = (now) => {
+      if (cancelled) return;
+      const t = Math.min(1, (now - t0) / duration);
+      el.scrollLeft = from + dist * EASE_OUT(t);
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => { cancelled = true; cancelAnimationFrame(raf); };
+  }
+
+  /* Najbližší začiatok karty k danej pozícii — cieľ sa vyberá až
+     z premietnutého bodu, takže švihnutie hodí pásom ďalej. */
+  function snapPoint(track, x) {
+    const cards = [...track.children].filter((el) => el.getBoundingClientRect().width > 1);
+    if (!cards.length) return x;
+    const base = track.scrollLeft;
+    let best = x, bestD = Infinity;
+    for (const card of cards) {
+      const left = base + card.getBoundingClientRect().left
+                 - track.getBoundingClientRect().left;
+      const d = Math.abs(left - x);
+      if (d < bestD) { bestD = d; best = left; }
+    }
+    return Math.max(0, Math.min(best, track.scrollWidth - track.clientWidth));
+  }
+
+
   document.querySelectorAll("[data-carousel-prev],[data-carousel-next]").forEach((btn) => {
     const trackId = btn.dataset.carouselPrev || btn.dataset.carouselNext;
     const track = document.getElementById(trackId);
@@ -833,7 +879,10 @@
       );
       const gap = parseFloat(getComputedStyle(track).gap) || 24;
       const step = card ? card.getBoundingClientRect().width + gap : 460;
-      track.scrollBy({ left: dir * step, behavior: "smooth" });
+      const max = track.scrollWidth - track.clientWidth;
+      const to = Math.max(0, Math.min(track.scrollLeft + dir * step, max));
+      track.__stopGlide?.();                       // prerušiteľné pri rýchlom klikaní
+      track.__stopGlide = glide(track, to);
     });
   });
 
@@ -841,6 +890,8 @@
      Klik na obrázok stále funguje — dragging sa aktivuje až po posune > 5px. */
   document.querySelectorAll(".gal__track, .steps__track").forEach((track) => {
     let startX = 0, startScroll = 0, isDown = false, moved = 0, pointerId = null;
+    /* posledné vzorky pohybu — z nich sa pri pustení počíta rýchlosť */
+    let samples = [];
 
     /* Natívny HTML5 drag obrázkov by inak zožral pointermove a drag by "odumrel". */
     track.addEventListener("dragstart", (e) => e.preventDefault());
@@ -850,6 +901,8 @@
       if (e.pointerType === "touch") return;
       if (e.button !== undefined && e.button !== 0) return;
       isDown = true; moved = 0;
+      track.__stopGlide?.();               // chytenie počas dojazdu ho preruší
+      samples = [{ x: e.clientX, t: performance.now() }];
       startX = e.clientX;
       startScroll = track.scrollLeft;
       pointerId = e.pointerId;
@@ -865,6 +918,10 @@
       moved = Math.abs(dx);
       if (moved > 3) track.classList.add("is-dragging");
       track.scrollLeft = startScroll - dx;
+      /* stačí krátke okno (~80 ms) — dlhšia história rozmaže švihnutie */
+      const now = performance.now();
+      samples.push({ x: e.clientX, t: now });
+      while (samples.length > 2 && now - samples[0].t > 80) samples.shift();
     };
     const onUp = () => {
       if (!isDown) return;
@@ -878,10 +935,29 @@
         const suppress = (ev) => { ev.preventDefault(); ev.stopPropagation(); };
         track.addEventListener("click", suppress, { capture: true, once: true });
       }
+      /* Dojazd: z posledných vzoriek zistíme rýchlosť, premietneme,
+         kam by pás doletel, a až z toho bodu vyberieme najbližšiu kartu.
+         Bez toho sa pás pri pustení zastaví na mieste (natívny dotykový
+         scroll zotrvačnosť má, ťahanie myšou nie). */
+      const last = samples[samples.length - 1];
+      const first = samples[0];
+      const dt = last && first ? last.t - first.t : 0;
+      const velocity = dt > 0 ? ((first.x - last.x) / dt) * 1000 : 0;   // px/s
+      samples = [];
+
+      const max = track.scrollWidth - track.clientWidth;
+      const projected = track.scrollLeft + project(velocity);
+      const target = Math.max(0, Math.min(snapPoint(track, projected), max));
+      /* trvanie podľa dĺžky dojazdu, nech krátky posun netrvá rovnako ako dlhý */
+      const dur = Math.min(700, Math.max(260, Math.abs(target - track.scrollLeft) * 0.9));
+
       requestAnimationFrame(() => {
         track.classList.remove("is-dragging");
         track.style.scrollSnapType = "";
         track.style.scrollBehavior = "";
+        if (Math.abs(velocity) > 40 || Math.abs(target - track.scrollLeft) > 4) {
+          track.__stopGlide = glide(track, target, dur);
+        }
       });
     };
     track.addEventListener("pointerdown", onDown);

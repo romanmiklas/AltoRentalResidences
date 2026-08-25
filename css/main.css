@@ -57,6 +57,13 @@
 
   --ease-soft:cubic-bezier(.33,1,.68,1);
 
+  /* --- materiál: väčšia plocha = hrubšie sklo ---------------------
+     Doteraz mal chip aj celý navpill rovnaký blur(10px), takže
+     priesvitnosť nenosila žiadnu informáciu o hierarchii. */
+  --glass-chip:blur(8px);      /* štítky, malé pilulky */
+  --glass-panel:blur(16px);    /* navpill, karty, formulárové plochy */
+  --glass-sheet:blur(24px);    /* prekryvy: cookie lišta, mobilné menu */
+
   /* --- motion: vstupné animácie ---------------------------------
      Pôvodne tu bol quint-out / expo-out — tie prejdú ~76 % dráhy
      už v prvej štvrtine času, čo pôsobí trhane. Zmiernené na
@@ -108,6 +115,46 @@ ul{list-style:none}
   color:transparent;
 }
 
+/* ============================================================
+   ODOZVA NA INTERAKCIU
+
+   Spätná väzba musí prísť pri stlačení, nie až po pustení — inak
+   pôsobí prvok hluchý (pri filtroch sa stav prekreslí až o snímku
+   neskôr). Držíme jednu hodnotu pre celý web, aby bol pocit
+   konzistentný, a krátke trvanie, nech to nebrzdí.
+   ============================================================ */
+.nav__link,.nav__projects,.nav__lang,
+.gal__btn,.selector__btn,.pill-selector__btn,
+.s2__item,.s6-card,.mmenu__link,.mmenu__project,
+.listing__photo,.project-card,
+.sort,.range__input{
+  -webkit-tap-highlight-color:transparent;
+}
+.nav__link:active,.nav__projects:active,.nav__lang:active,
+.gal__btn:active,.selector__btn:active,.pill-selector__btn:active,
+.s6-card:active,.mmenu__link:active,.mmenu__project:active{
+  transform:scale(.97);
+  transition:transform 100ms ease-out;
+}
+/* veľké plochy sa pri stlačení sotva hnú — inak to pôsobí gumene */
+.listing__photo:active,.project-card:active,.s2__item:active{
+  transform:scale(.995);
+  transition:transform 100ms ease-out;
+}
+
+/* Viditeľný fokus pre klávesnicu. Doteraz ho mal len formulár
+   a cookie lišta, takže sa nedalo zorientovať pri prechode tabom. */
+:focus-visible{
+  outline:2px solid var(--alto-dark-olive);
+  outline-offset:3px;
+  border-radius:4px;
+}
+/* na tmavom podklade (navpill, mobilné menu, pätička) musí byť svetlý */
+.nav :focus-visible,.mmenu :focus-visible,.footer :focus-visible,
+.s5 :focus-visible,.steps :focus-visible{
+  outline-color:var(--alto-white);
+}
+
 /* ---------- buttons ---------- */
 .btn{
   display:inline-flex;align-items:center;gap:10px;
@@ -120,14 +167,14 @@ ul{list-style:none}
 .btn--olive{background:var(--alto-dark-olive);color:var(--alto-white)}
 .btn--olive:hover{background:var(--alto-olive)}
 .btn--glass{
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
   background:rgba(255,255,255,.2);
   border:.5px solid rgba(255,255,255,.4);
   color:var(--alto-white);
 }
 .btn--glass:hover{background:rgba(255,255,255,.32)}
 .btn--outline{
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
   border:var(--stroke-w) solid var(--stroke);
   color:var(--alto-light-grey);background:transparent;
 }
@@ -146,7 +193,7 @@ ul{list-style:none}
 }
 .chip--dark{
   background:var(--brand-black-40);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-chip);-webkit-backdrop-filter:var(--glass-chip);
   color:var(--alto-white);
 }
 
@@ -180,7 +227,7 @@ ul{list-style:none}
   width:40px;height:40px;border-radius:20px;
   align-items:center;justify-content:center;flex:0 0 auto;
   background:var(--brand-black-40);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
   transition:background .25s;
 }
 .nav__burger img{width:14px;height:14px;object-fit:contain}
@@ -200,7 +247,7 @@ ul{list-style:none}
   display:flex;flex-direction:column;gap:16px;
   border-radius:24px;
   background:var(--brand-black-40);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-sheet);-webkit-backdrop-filter:var(--glass-sheet);
   border:.5px solid rgba(255,255,255,.2);
   overflow:hidden;
   transition:left .5s var(--ease-soft),top .5s var(--ease-soft),
@@ -317,7 +364,7 @@ body.is-menu-open{overflow:hidden}
   border-radius:25px;
   background:var(--brand-black-40);
   border:.5px solid rgba(255,255,255,.2);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
   transition:padding-bottom .4s var(--ease-soft),border-radius .4s var(--ease-soft);
 }
 .nav__row{
@@ -495,7 +542,7 @@ body.is-menu-open{overflow:hidden}
   display:flex;flex-direction:column;gap:4px;
   padding:4px;border-radius:12px;
   background:rgba(255,255,255,.9);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
 }
 .project-card__media{
   position:relative;flex:1 1 0;min-height:0;overflow:hidden;border-radius:8px;
@@ -553,7 +600,7 @@ body.is-menu-open{overflow:hidden}
 .project-card__link{
   background:transparent;color:var(--alto-olive);
   text-decoration:underline;text-underline-offset:3px;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
 }
 .project-card__link:hover{color:var(--alto-dark-olive)}
 
@@ -674,7 +721,7 @@ body.is-menu-open{overflow:hidden}
 .s3-card--black{background:var(--alto-black)}
 .s3-card--outline{
   border:var(--stroke-w) solid var(--stroke);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
 }
 .s3-card__text{
   font-size:18px;line-height:1.4;color:var(--alto-white);
@@ -712,7 +759,7 @@ body.is-menu-open{overflow:hidden}
 }
 .s3__headline{
   font-family:var(--font-serif);font-weight:300;
-  font-size:56px;line-height:1;letter-spacing:-1.08px;
+  font-size:56px;line-height:1;letter-spacing:-1.68px;
   max-width:397px;
   background:linear-gradient(-70.21deg,var(--alto-olive) 24.7%,var(--alto-white) 90.13%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
@@ -726,7 +773,7 @@ body.is-menu-open{overflow:hidden}
 }
 .s3-card__glass{
   position:relative;z-index:1;
-  backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
   background:rgba(138,133,133,.1);
   border-radius:4px;padding:14px 18px;
   font-size:18px;line-height:1.4;color:var(--alto-white);
@@ -929,7 +976,7 @@ body.is-menu-open{overflow:hidden}
   display:inline-flex;align-items:center;gap:8px;
   height:32px;padding:0 16px;border-radius:24px;
   background:rgba(255,255,255,.4);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-chip);-webkit-backdrop-filter:var(--glass-chip);
   font-family:var(--font-sans);font-weight:500;
   font-size:14px;line-height:1.2;letter-spacing:.28px;color:var(--alto-white);
   white-space:nowrap;
@@ -1044,7 +1091,7 @@ img.s6-route{object-fit:contain;object-position:center}
 .s6__headline{
   position:absolute;top:72px;left:calc(var(--pad-x) + 32px);z-index:3;
   font-family:var(--font-serif);font-weight:300;
-  font-size:56px;line-height:1;letter-spacing:-1.08px;
+  font-size:56px;line-height:1;letter-spacing:-1.68px;
   background:linear-gradient(-90deg,var(--alto-olive) 0%,var(--alto-black) 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
@@ -1057,7 +1104,7 @@ img.s6-route{object-fit:contain;object-position:center}
   height:48px;padding:12px;border-radius:4px;
   display:flex;align-items:center;
   background:var(--light-green);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-chip);-webkit-backdrop-filter:var(--glass-chip);
   font-family:var(--font-sans);font-weight:500;
   font-size:14px;line-height:1.2;letter-spacing:.28px;
   color:var(--grey-500,#8a8585);text-align:center;white-space:nowrap;
@@ -1135,7 +1182,7 @@ img.s6-route{object-fit:contain;object-position:center}
   display:flex;align-items:center;justify-content:flex-end;
   height:96px;padding:8px;border-radius:14px;
   background:rgba(136,141,124,.2);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
   transition:background .25s;
 }
 .s6-card:hover{background:rgba(136,141,124,.32)}
@@ -1263,7 +1310,7 @@ img.s6-route{object-fit:contain;object-position:center}
   display:inline-flex;align-items:center;gap:8px;
   height:32px;padding:0 16px;border-radius:4px;
   background:var(--brand-black-40);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-chip);-webkit-backdrop-filter:var(--glass-chip);
   font-family:var(--font-sans);font-weight:500;
   font-size:14px;line-height:1.2;letter-spacing:.28px;
   color:var(--alto-white);white-space:nowrap;
@@ -1302,7 +1349,7 @@ img.s6-route{object-fit:contain;object-position:center}
 .steps__intro{flex:0 0 437px;min-width:0;display:flex;flex-direction:column;gap:24px;padding-bottom:24px}
 .steps__headline{
   font-family:var(--font-serif);font-weight:300;
-  font-size:56px;line-height:1;letter-spacing:-1.08px;
+  font-size:56px;line-height:1;letter-spacing:-1.68px;
 }
 .steps__intro p{font-size:16px;line-height:1.3;color:var(--alto-white)}
 .steps__track{
@@ -1354,7 +1401,7 @@ img.s6-route{object-fit:contain;object-position:center}
 .contact__text{display:flex;flex-direction:column;gap:40px;max-width:464px}
 .contact__headline{
   font-family:var(--font-serif);font-weight:300;
-  font-size:56px;line-height:1;letter-spacing:-1.08px;
+  font-size:56px;line-height:1;letter-spacing:-1.68px;
 }
 .contact__lede{font-size:16px;line-height:1.4;color:var(--alto-light-grey);max-width:322px}
 
@@ -1422,7 +1469,7 @@ img.s6-route{object-fit:contain;object-position:center}
   margin:8px 0 4px;
   padding:8px 10px 8px 8px;border-radius:4px;
   background:var(--alto-white);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
 }
 .inquiry-tag[hidden]{display:none}
 .inquiry-tag__label{
@@ -1512,7 +1559,7 @@ img.s6-route{object-fit:contain;object-position:center}
   min-height:320px;                 /* zhruba štvorec (340×320) */
   padding:24px;border-radius:20px;
   background:rgba(255,255,255,.92);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  backdrop-filter:var(--glass-sheet);-webkit-backdrop-filter:var(--glass-sheet);
   border:var(--stroke-w) solid var(--stroke);
   /* vjazd zdola s jemným priblížením */
   opacity:0;transform:translateY(16px) scale(.98);
@@ -1631,7 +1678,7 @@ img.s6-route{object-fit:contain;object-position:center}
 .page-legal .header{
   margin-bottom:0;padding:24px var(--pad-x);
   background:rgba(243,242,242,.85);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  backdrop-filter:var(--glass-panel);-webkit-backdrop-filter:var(--glass-panel);
 }
 .page-legal .header__logo-img{filter:brightness(0) saturate(0) invert(12%)}
 
@@ -1654,7 +1701,7 @@ img.legal__back-icon{width:20px;height:20px;object-fit:contain;transform:rotate(
 .legal__title{
   margin-top:24px;
   font-family:var(--font-serif);font-weight:300;
-  font-size:56px;line-height:1;letter-spacing:-1.08px;
+  font-size:56px;line-height:1;letter-spacing:-1.68px;
 }
 .legal__lede{
   margin-top:24px;max-width:640px;
@@ -2077,6 +2124,44 @@ html[lang="sk"] .legal__note{display:none}
    preto ho nabehneme keyframom — nič si tým neprepíšeme. */
 .motion .header{animation:alto-fade-in var(--dur-lg) var(--ease-entrance) 120ms both}
 @keyframes alto-fade-in{from{opacity:0}to{opacity:1}}
+
+/* ============================================================
+   PRÍSTUPNOSŤ — priesvitnosť a kontrast
+
+   Web stojí na 17 priesvitných plochách. Kto si v systéme zníži
+   priesvitnosť alebo zvýši kontrast, potrebuje ich dostať do
+   čitateľnej podoby — sklo zmizne, podklad stuhne.
+   ============================================================ */
+@media (prefers-reduced-transparency:reduce){
+  :root{--glass-chip:none;--glass-panel:none;--glass-sheet:none}
+  /* tmavé plochy na fotkách */
+  .nav,.nav__burger,.chip--dark,.btn--glass,.project-card__link{
+    background:rgba(45,42,42,.92);
+  }
+  .s5__counter{background:rgba(45,42,42,.85)}
+  /* svetlé plochy */
+  .consent__card,.mmenu__pill,.inquiry-tag,.s3-card__glass{
+    background:var(--alto-white);
+  }
+  .s6-card{background:var(--tag-grey)}
+  .btn--outline,.s3-card--outline{background:var(--light-green)}
+  .page-legal .header{background:var(--alto-white)}
+}
+
+@media (prefers-contrast:more){
+  :root{--glass-chip:none;--glass-panel:none;--glass-sheet:none}
+  /* priesvitné plochy dostanú pevný podklad a zreteľný okraj */
+  .nav,.nav__burger,.chip--dark,.btn--glass{
+    background:var(--alto-black);border:1px solid var(--alto-white);
+  }
+  .consent__card,.mmenu__pill,.s6-card,.inquiry-tag,.btn--outline{
+    background:var(--alto-white);border:1px solid var(--alto-black);
+  }
+  /* stlmené texty sa musia dotiahnuť k plnému kontrastu */
+  .s2__item{opacity:1;color:var(--alto-black)}
+  .listing__sqm,.contact__label,.gal__btn{color:var(--alto-black)}
+  :focus-visible{outline-width:3px}
+}
 
 /* reduced motion — vypni scroll efekty */
 @media(prefers-reduced-motion:reduce){
