@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Motion: trieda .motion zapína vstupne animacie (počiatočný stav je v CSS,
+     takže obsah nikdy nepreblikne). Nepridá sa pri prefers-reduced-motion.
+     Poistka: ak sa js/motion.js nenačíta, triedu po 3 s odstránime. -->
+<script>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('motion');
+    setTimeout(function(){
+      if (!window.__altoMotion) document.documentElement.classList.remove('motion');
+    }, 3000);
+  }
+</script>
+
+<!-- Google Consent Mode v2 — predvolene DENIED, kým používateľ neudelí súhlas
+     (aktualizuje ho js/consent.js). Musí byť pred GTM. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent','default',{
+    ad_storage:'denied',
+    ad_user_data:'denied',
+    ad_personalization:'denied',
+    analytics_storage:'denied',
+    functionality_storage:'granted',
+    security_storage:'granted',
+    wait_for_update:500
+  });
+</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-K6T9N5GS');</script>
+<!-- End Google Tag Manager -->
+
+<title>Spracovanie osobných údajov | ALTO Rental Residences</title>
+<meta name="description" content="Pravidlá spracúvania osobných údajov spoločnosti Alto Real Estate j. s. a. v súlade s GDPR.">
+<meta name="robots" content="index, follow">
+<!-- favicon (olivový squircle s „A") -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="canonical" href="https://www.altorentalresidences.sk/zasady-spracovania-osobnych-udajov.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ALTO Rental Residences">
+<meta property="og:locale" content="sk_SK">
+<meta property="og:url" content="https://www.altorentalresidences.sk/zasady-spracovania-osobnych-udajov.html">
+<meta property="og:title" content="Spracovanie osobných údajov | ALTO Rental Residences">
+<meta property="og:description" content="Pravidlá spracúvania osobných údajov spoločnosti Alto Real Estate j. s. a. v súlade s GDPR.">
+<meta property="og:image" content="https://www.altorentalresidences.sk/assets/img/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.altorentalresidences.sk/assets/img/og-image.jpg">
+<link rel="stylesheet" href="css/main.css">
+<link rel="preload" href="assets/fonts/FKRomanStandard-Light.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/SctoGroteskB-Medium.woff2" as="font" type="font/woff2" crossorigin>
+</head>
+<body class="page-legal">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K6T9N5GS"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<header class="header" id="header">
+    <div class="header__logo">
+      <a href="index.html" aria-label="ALTO — domov">
+        <img src="assets/icons/logo.svg" alt="ALTO" class="header__logo-img">
+      </a>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="nav__row">
+        <button class="nav__projects" type="button" id="navProjects" aria-expanded="false" aria-controls="navDropdown">
+          <span>Projekty</span>
+          <img class="nav__dot" src="assets/icons/dot.svg" alt="" width="6" height="6">
+        </button>
+        <a class="nav__link" href="index.html#standard">Štandard</a>
+        <a class="nav__link" href="index.html#ponuka">Ponuka</a>
+        <a class="nav__link" href="index.html#lokalita">Lokalita</a>
+        <a class="nav__link" href="index.html#postup">Proces</a>
+        <a class="nav__link" href="index.html#kontakt">Kontakt</a>
+        <button class="nav__lang" type="button" id="navLang" aria-label="Jazyk">
+          <span id="navLangLabel">SK</span>
+          <img class="nav__dot" src="assets/icons/dot.svg" alt="" width="6" height="6">
+        </button>
+        <a href="index.html#ponuka" class="btn btn--olive nav__cta">Zobraziť ponuku</a>
+        <button class="nav__burger" type="button" id="navBurger"
+                aria-expanded="false" aria-controls="mobileMenu" aria-label="Otvoriť menu">
+          <img src="assets/icons/menu-dots.svg" alt="" width="14" height="14">
+        </button>
+      </div>
+
+      <div class="nav__dropdown" id="navDropdown">
+        <div class="nav__dropdown-inner">
+          <a class="nav-offer" href="index.html#projekty" data-project="skypark">
+            <span class="nav-offer__thumb"><img src="assets/img/project-skypark.jpg" alt="" loading="lazy" decoding="async"></span>
+            <span class="nav-offer__text">
+              <span class="nav-offer__title">
+                <span class="nav-offer__name">SKY PARK</span>
+                <span class="nav-offer__arrow"><img src="assets/icons/arrow-tiny.svg" alt="" width="8" height="8"></span>
+              </span>
+              <span class="nav-offer__desc">Továrenská 14 • Staré mesto • Bratislava</span>
+            </span>
+          </a>
+          <a class="nav-offer" href="index.html#projekty" data-project="florian">
+            <span class="nav-offer__thumb"><img src="assets/img/project-florian.jpg" alt="" loading="lazy" decoding="async"></span>
+            <span class="nav-offer__text">
+              <span class="nav-offer__title">
+                <span class="nav-offer__name">FLORIAN</span>
+                <span class="nav-offer__arrow"><img src="assets/icons/arrow-tiny.svg" alt="" width="8" height="8"></span>
+              </span>
+              <span class="nav-offer__desc">Školská 2 • Staré mesto • Bratislava</span>
+            </span>
+          </a>
+        </div>
+      </div>
+  </nav>
+</header>
+
+<!-- ================= MOBILNÉ MENU (fullscreen, Figma 70:7513) ================= -->
+<div class="mmenu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <div class="mmenu__pill">
+    <div class="mmenu__head">
+      <a class="mmenu__logo" href="index.html" aria-label="ALTO — domov">
+        <img src="assets/icons/logo.svg" alt="ALTO">
+      </a>
+      <button class="mmenu__close" type="button" id="mmenuClose" aria-label="Zavrieť menu">
+        <img src="assets/icons/menu-dots.svg" alt="" width="14" height="14">
+      </button>
+    </div>
+
+    <div class="mmenu__projects">
+      <a class="mmenu__project" href="index.html#projekty">
+        <span class="mmenu__thumb"><img src="assets/img/project-skypark.jpg" alt="" loading="lazy" decoding="async"></span>
+        <span class="mmenu__project-text">
+          <span class="mmenu__project-title">
+            SKY PARK
+            <span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span>
+          </span>
+          <span class="mmenu__project-desc">Továrenská 14 • Staré mesto • Bratislava</span>
+        </span>
+      </a>
+      <a class="mmenu__project" href="index.html#projekty">
+        <span class="mmenu__thumb"><img src="assets/img/project-florian.jpg" alt="" loading="lazy" decoding="async"></span>
+        <span class="mmenu__project-text">
+          <span class="mmenu__project-title">
+            FLORIAN
+            <span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span>
+          </span>
+          <span class="mmenu__project-desc">Školská 2 • Staré mesto • Bratislava</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="mmenu__bottom">
+      <nav class="mmenu__links" aria-label="Hlavné menu">
+        <a class="mmenu__link" href="index.html#standard">Štandard<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+        <a class="mmenu__link" href="index.html#ponuka">Ponuka<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+        <a class="mmenu__link" href="index.html#lokalita">Lokalita<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+        <a class="mmenu__link" href="index.html#postup">Proces<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+        <a class="mmenu__link" href="index.html#kontakt">Kontakt<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+      </nav>
+
+      <div class="mmenu__actions">
+        <div class="mmenu__lang" role="radiogroup" aria-label="Jazyk">
+          <button type="button" class="mmenu__lang-btn is-active" role="radio" aria-checked="true" data-lang="sk">Slovak</button>
+          <button type="button" class="mmenu__lang-btn" role="radio" aria-checked="false" data-lang="en">English</button>
+        </div>
+        <a href="index.html#ponuka" class="mmenu__cta">Zobraziť ponuku</a>
+      </div>
+
+      <p class="mmenu__copy">2026 © ALTO Real Estate.<br>All rights reserved.</p>
+    </div>
+  </div>
+</div>
+
+<main class="legal">
+  <div class="legal__inner" data-reveal-group="load" data-reveal-step="90" data-reveal-delay="160">
+    <a class="legal__back" href="index.html" data-reveal="fade">
+      <img class="legal__back-icon" src="assets/icons/arrow-up-right-olive.svg" alt="" width="20" height="20">Späť na úvod
+    </a>
+    <h1 class="legal__title gradient-text" data-reveal="lg">Spracovanie osobných údajov</h1>
+    <p class="legal__lede" data-reveal>Pravidlá spracúvania osobných údajov, ktoré od Vás získavame prostredníctvom tejto webovej stránky, v súlade s nariadením GDPR.</p>
+    <p class="legal__note">This page is available in Slovak only. The Slovak wording is the binding version.</p>
+
+    <div class="legal__body" data-reveal>
+      <section class="legal__section">
+        <h2>1. Úvod</h2>
+        <p>Vaše súkromie je pre nás dôležité, preto sa snažíme o zabezpečenie vysokej úrovne ochrany Vašich osobných údajov pri ich spracúvaní, ako aj o zachovanie transparentnosti ich spracúvania v súlade s Nariadením Európskeho parlamentu a Rady (EÚ) 2016/679 z 27. apríla 2016 o ochrane osobných údajov, ktorým sa zrušuje smernica 95/45/ES (všeobecné nariadenie o ochrane údajov) (ďalej len „<strong>GDPR</strong>“).</p>
+        <p>Na účely GDPR je prevádzkovateľom určujúcim účel a rozsah spracúvania osobných údajov poskytnutých prostredníctvom niektorej z funkcionalít tohto webu spoločnosť <strong>Alto Real Estate j. s. a.</strong>, so sídlom Bottova 1/1, Bratislava – mestská časť Staré Mesto 811 09, IČO: 54 331 617, zapísaná v obchodnom registri Okresného súdu Bratislava I, oddiel: Sja, vložka č. 207/B (ďalej len aj ako „<strong>Prevádzkovateľ</strong>“). V prípade, ak máte akékoľvek otázky týkajúce sa spracúvania osobných údajov, ktoré sme od Vás získali prostredníctvom niektorej z funkcionalít tohto webu, alebo v prípade, ak chcete uplatniť niektoré z nižšie uvedených práv vyplývajúcich Vám z GDPR, prosím kontaktujte nás prostredníctvom písomných podaní adresovaných na vyššie uvedenú adresu sídla Prevádzkovateľa alebo elektronicky na e-mailovej adrese <a href="mailto:gdpr@altorealestate.sk">gdpr@altorealestate.sk</a>.</p>
+      </section>
+      <section class="legal__section">
+        <h2>2. Získavanie osobných údajov</h2>
+        <p>Tieto pravidlá sa aplikujú na spracúvanie osobných údajov, ktoré od Vás získavame priamo prostredníctvom (a) vyplnenia kontaktného formulára, (b) žiadosti o zasielanie newsletterov, (c) poskytnutia spätnej väzby a (d) osobných údajov, ktoré nám poskytnete prostredníctvom telefonickej alebo e-mailovej komunikácie na základe kontaktných údajov sprístupnených na tejto webovej stránke.</p>
+        <p>Počas používania tohto webu môžeme taktiež zbierať cookies. Viac informácií o používaní cookies na našom webe nájdete <a href="zasady-cookies.html">tu</a>.</p>
+      </section>
+      <section class="legal__section">
+        <h2>3. Osobné údaje, ktoré o Vás spracúvame</h2>
+        <p>Za účelmi špecifikovanými nižšie v bode 4 týchto pravidiel sú spracúvané osobné údaje o:</p>
+        <ul>
+          <li>jednotlivcoch, ktorí majú záujem o kúpu bytov alebo kúpu, resp. prenájom nebytových priestorov v realitných projektoch Prevádzkovateľa,</li>
+          <li>jednotlivcoch, ktorí majú záujem byť informovaní o aktuálnej ponuke v rámci realitných projektov Prevádzkovateľa, a</li>
+          <li>jednotlivcoch, ktorých má záujem osloviť Prevádzkovateľ v záujme realizácie svojich marketingových aktivít.</li>
+        </ul>
+        <p>Získané osobné údaje však spracúvame v súlade so zásadou minimalizácie spracúvania osobných údajov zakotvenou v GDPR, a preto ich spracúvame len v nevyhnutnej miere a v nasledujúcom rozsahu: <strong>meno a priezvisko, e-mailová adresa a telefónne číslo</strong>.</p>
+        <p>Predmetom nami vykonávaného spracúvania osobných údajov nie sú osobitné kategórie osobných údajov podľa GDPR, ani osobné údaje osôb mladších ako 16 rokov.</p>
+        <p>Je veľmi dôležité, aby osobné údaje, ktoré o Vás spracúvame, boli pravdivé a aktuálne. Informujte nás, prosím, ak sa Vaše osobné údaje počas trvania spracúvania zmenia.</p>
+      </section>
+      <section class="legal__section">
+        <h2>4. Účely, na ktoré spracúvame Vaše osobné údaje</h2>
+        <p>Vaše osobné údaje spracúvame na nasledujúce účely:</p>
+        <ul>
+          <li>na komunikáciu s Vami, poskytnutie reakcie alebo spätnej väzby k prejavenému záujmu alebo podnetu z Vašej strany predloženému prostredníctvom niektorej z funkcionalít tejto webovej stránky alebo využitia kontaktných údajov umiestnených na tejto webovej stránke;</li>
+          <li>na marketingové účely a realizáciu našich marketingových aktivít, ktoré sú v súlade so zákonom; a</li>
+          <li>na účely správy a ochrany tejto webovej stránky.</li>
+        </ul>
+        <p>V prípade, ak spracúvame Vaše osobné údaje za účelom priameho marketingu vo forme zasielania newsletteru o novinkách a ponuke nášho realitného portfólia, o ktorých si myslíme, že by Vás mohli zaujímať, vždy Vám dávame možnosť odhlásiť sa z odberu newsletteru, ak už nebudete mať kedykoľvek v budúcnosti záujem na jeho odbere.</p>
+      </section>
+      <section class="legal__section">
+        <h2>5. Právny základ spracúvania Vašich osobných údajov</h2>
+        <p>Spracúvanie Vašich osobných údajov na účely popísané vyššie v bode 4 pod písm. a) (t. j. komunikácia na základe Vami prejaveného záujmu) a na účely popísané v bode 4 pod písm. b) (t. j. naše marketingové aktivity) vychádza z nášho oprávneného záujmu (i) na aktívnej komunikácii s jednotlivcami, ktorí prejavia záujem o nehnuteľnosť z nášho realitného portfólia, a (ii) na efektívnej marketingovej podpore a propagácii našich podnikateľských aktivít a ponuky realitného portfólia. Aj keď sú právnym základom spracúvania Vašich osobných údajov naše oprávnené záujmy, vždy rešpektujeme a uprednostňujeme Vaše práva a záujmy pred našimi záujmami.</p>
+        <p>V prípade spracúvania osobných údajov na účel správy a ochrany tejto webovej stránky je tiež právnym základom spracúvania osobných údajov oprávnený záujem, ktorým je zabezpečenie poskytovania IT služieb a udržanie bezpečnosti.</p>
+        <p>Spracúvanie Vašich osobných údajov na základe nášho oprávneného záujmu vyplýva z čl. 6 ods. 1 písm. f) GDPR. Máte však právo kedykoľvek namietať uvedené spracovanie Vašich osobných údajov. Za týmto účelom nás kedykoľvek kontaktujte písomne na adrese nášho sídla uvedeného v úvode týchto pravidiel alebo na e-mailovej adrese <a href="mailto:gdpr@altorealestate.sk">gdpr@altorealestate.sk</a>. Každé podanie námietky dôsledne vyhodnotíme a o výsledku Vás budeme informovať.</p>
+      </section>
+      <section class="legal__section">
+        <h2>6. Doba spracúvania Vašich osobných údajov</h2>
+        <p>Vaše osobné údaje uchovávame tak dlho, ako je to potrebné na splnenie účelov, na ktoré sme ich získali. Doba spracúvania Vašich osobných údajov je <strong>3 roky odo dňa ich získania</strong>. Plynutie doby spracúvania osobných údajov pravidelne kontrolujeme a v prípade, ak uplynie, spracúvanie osobných údajov ukončíme a osobné údaje vymažeme, resp. zlikvidujeme.</p>
+      </section>
+      <section class="legal__section">
+        <h2>7. Zdieľanie Vašich osobných údajov s tretími stranami</h2>
+        <p>V súlade s účelmi spracovania špecifikovanými v týchto pravidlách sa realizuje spracúvanie Vašich osobných údajov aj prostredníctvom tretích osôb.</p>
+        <p>Takýmito tretími osobami sú poskytovatelia služieb, ktoré využívame, aby sme mohli realizovať spracúvanie Vašich osobných údajov na účely podľa týchto pravidiel. Konkrétne ide o služby spojené s technickou a softvérovou podporou a administráciou marketingových a predajných aktivít Prevádzkovateľa a spoločností, prostredníctvom ktorých Prevádzkovateľ realizuje development, výstavbu a prenájom nehnuteľností v rámci jednotlivých realitných projektov.</p>
+        <p>Treťou osobou je aj spoločnosť <strong>Dreamer s. r. o.</strong>, so sídlom Bottova 1/1, Bratislava – mestská časť Staré Mesto 811 09, IČO: 50 608 037, zapísaná v obchodnom registri Okresného súdu Bratislava I, oddiel: Sro, vložka č. 120215/B, prostredníctvom ktorej Prevádzkovateľ realizuje development, výstavbu a prenájom nehnuteľností. Prevádzkovateľ uzatvoril so sprostredkovateľmi zmluvy o spracúvaní osobných údajov.</p>
+        <p>Na spracúvaní Vašich osobných údajov sa ako sub-sprostredkovateľ podieľa aj spoločnosť poskytujúca služby webovej podpory a marketingovej komunikácie na základe zmluvy so spoločnosťou Dreamer s. r. o.</p>
+        <p>V súvislosti so súbormi cookies, na ktoré nie je potrebný súhlas v zmysle <a href="zasady-cookies.html">Zásad používania súborov cookies</a>, sú našimi sprostredkovateľmi nasledovné spoločnosti:</p>
+        <ul>
+          <li><strong>Google Ireland Ltd.</strong>, so sídlom Gordon House, Barrow Street, Dublin 4, D04 E5W5, Írsko, IČO (CRO): 368047 — v súvislosti so spracúvaním analytických súborov cookies prostredníctvom platformy Google Analytics;</li>
+          <li><strong>Facebook Ireland Ltd.</strong>, so sídlom 4 Grand Canal Square, Grand Canal Harbour, Dublin 2, Írsko, IČO (CRO): 462932 — v súvislosti so spracúvaním analytických súborov cookies prostredníctvom platformy Facebook Pixel.</li>
+        </ul>
+        <p>Prevádzkovateľ uzatvoril so sprostredkovateľmi zmluvy o spracúvaní osobných údajov.</p>
+        <p>Sprostredkovatelia aj sub-sprostredkovateľ sú zaviazaní spracúvať Vaše osobné údaje výlučne na účely, ako sú popísané v týchto pravidlách. Vaše dáta nie sú sprístupnené tretím stranám na účely ich nezávislého využitia alebo spracovania nad rámec účelov podľa týchto pravidiel.</p>
+      </section>
+      <section class="legal__section">
+        <h2>8. Medzinárodný prenos Vašich osobných údajov</h2>
+        <p>Vaše osobné údaje nie sú prenášané do iných štátov mimo Európskej únie. Softvérový systém, v ktorom sú Vaše osobné údaje spracúvané na základe licenčnej zmluvy medzi Prevádzkovateľom a poskytovateľom softvérového systému, je uložený na serveroch poskytovateľa tohto systému so sídlom v Spojenom kráľovstve Veľkej Británie a Severného Írska.</p>
+      </section>
+      <section class="legal__section">
+        <h2>9. Vaše práva súvisiace so spracúvaním Vašich osobných údajov</h2>
+        <p>GDPR Vám priznáva značný rozsah práv, ktoré rešpektujeme a umožníme Vám uplatňovať ich v plnom rozsahu. V rámci uplatnenia Vašich práv ste oprávnení najmä:</p>
+        <ul>
+          <li>požiadať nás o kópiu osobných údajov, ktoré o Vás vedieme, a opis toho, ako tieto osobné údaje používame;</li>
+          <li>požiadať o nápravu osobných údajov, ktoré o Vás vedieme, ak sa domnievate, že tieto osobné údaje môžu byť nepresné, neaktuálne alebo nesprávne;</li>
+          <li>požiadať o výmaz osobných údajov, ktoré o Vás spracúvame, v prípade, ak Vaše údaje spracúvame na základe súhlasu;</li>
+          <li>požiadať o poskytnutie Vašich osobných údajov, ktoré o Vás spracúvame automatizovanými prostriedkami na základe Vášho súhlasu, tretej strane;</li>
+          <li>požiadať, aby sme obmedzili používanie Vašich osobných údajov alebo účel ich spracúvania v určitých obmedzených prípadoch;</li>
+          <li>za určitých okolností namietať spracúvanie Vašich osobných údajov, keďže spracúvame Vaše osobné údaje na základe našich oprávnených záujmov.</li>
+        </ul>
+        <p>V prípade, ak máte záujem o bližšie informácie o Vašich právach vyplývajúcich z GDPR, ktoré je možné uplatniť voči nám vo vzťahu k spracúvaniu Vašich osobných údajov, neváhajte nás kontaktovať písomne na adrese nášho sídla uvedeného v úvode týchto pravidiel alebo na e-mailovej adrese <a href="mailto:gdpr@altorealestate.sk">gdpr@altorealestate.sk</a>.</p>
+        <p>Našim záujmom je snažiť sa zodpovedať akékoľvek Vaše otázky a vyriešiť akúkoľvek sťažnosť súvisiacu so spracúvaním Vašich osobných údajov. Ak však máte pocit, že sme Vašu sťažnosť nevyriešili, berte na vedomie, že máte právo sťažovať sa na Úrade na ochranu osobných údajov Slovenskej republiky.</p>
+        <p>Tieto pravidlá spracúvania osobných údajov môžu byť jednostranne kedykoľvek doplnené alebo zmenené.</p>
+      </section>
+    </div>
+
+    <p class="legal__meta">Prevádzkovateľ: Alto Real Estate j. s. a., Bottova 1/1, 811 09 Bratislava · Kontakt pre otázky k ochrane údajov: <a href="mailto:gdpr@altorealestate.sk">gdpr@altorealestate.sk</a></p>
+  </div>
+</main>
+
+<footer class="footer" data-reveal="fade">
+  <p>2026 © ALTO Real Estate. All rights reserved.</p>
+  <div class="footer__links">
+    <a href="zasady-cookies.html" data-consent-open>Nastavenia cookies</a>
+    <a href="zasady-spracovania-osobnych-udajov.html">Zásady spracúvania osobných údajov</a>
+  </div>
+</footer>
+
+<!-- ================= COOKIE LIŠTA + SPRÁVA SÚHLASU ================= -->
+<div class="consent" id="cookieConsent" role="dialog" aria-labelledby="consentTitle" hidden>
+  <div class="consent__card" data-view="intro">
+    <div class="consent__head">
+      <img src="assets/icons/cookie.svg" alt="" width="20" height="20">
+      <span class="consent__title" id="consentTitle">Súbory cookies</span>
+    </div>
+
+    <p class="consent__text">Nevyhnutné cookies používame vždy. So súhlasom pridáme analytické a reklamné, aby sme web zlepšovali. <a href="zasady-cookies.html">Zásady používania cookies</a></p>
+
+    <div class="consent__list">
+      <label class="consent__switch consent__switch--locked">
+        <span class="consent__switch-text">
+          <span class="consent__switch-name">Nevyhnutné</span>
+          <span class="consent__switch-desc">Potrebné pre chod webu, nedajú sa vypnúť.</span>
+        </span>
+        <input type="checkbox" checked disabled>
+        <span class="consent__track" aria-hidden="true"></span>
+      </label>
+      <label class="consent__switch">
+        <span class="consent__switch-text">
+          <span class="consent__switch-name">Analytické</span>
+          <span class="consent__switch-desc">Merajú návštevnosť a výkon webu.</span>
+        </span>
+        <input type="checkbox" data-cat="analytics">
+        <span class="consent__track" aria-hidden="true"></span>
+      </label>
+      <label class="consent__switch">
+        <span class="consent__switch-text">
+          <span class="consent__switch-name">Reklamné</span>
+          <span class="consent__switch-desc">Umožňujú cielenú reklamu a remarketing.</span>
+        </span>
+        <input type="checkbox" data-cat="ads">
+        <span class="consent__track" aria-hidden="true"></span>
+      </label>
+    </div>
+
+    <div class="consent__actions">
+      <button type="button" class="btn btn--olive consent__accept">Prijať všetko</button>
+      <button type="button" class="btn btn--olive consent__save">Uložiť voľby</button>
+      <div class="consent__row">
+        <button type="button" class="btn btn--outline consent__settings-btn" aria-expanded="false">Nastavenia</button>
+        <button type="button" class="btn btn--outline consent__reject">Odmietnuť</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/i18n.js" defer></script>
+<script src="js/motion.js" defer></script>
+<script src="js/main.js" defer></script>
+<script src="js/consent.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+# ============================================================
+# ALTO Rental Residences — produkčná konfigurácia Apache
+#
+# Všetko je zabalené v <IfModule>, takže na hostingu bez daného
+# modulu sa pravidlo len ticho preskočí a web beží ďalej.
+# ============================================================
+
+# ---------- základ ----------
+AddDefaultCharset utf-8
+Options -Indexes
+DirectoryIndex index.html
+ServerSignature Off
+
+ErrorDocument 404 /404.html
+
+
+# ---------- kanonická adresa: https + www ----------
+# Metadáta (canonical, og:url) hlásia www.altorentalresidences.sk, takže na
+# jednu adresu musí smerovať aj server — inak si Google indexuje dve verzie.
+#
+# !!! Pri testovaní na inej adrese (staging, lokálny MAMP, IP) celý blok
+#     zakomentujte — inak vás server bude vždy presmerovať na ostrú doménu.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # HTTPS. Kontrolujeme aj X-Forwarded-Proto kvôli hostingom, kde SSL
+  # končí na proxy — bez toho by vznikla nekonečná slučka presmerovaní.
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://www.altorentalresidences.sk%{REQUEST_URI} [R=301,L]
+
+  # bez www -> s www
+  RewriteCond %{HTTP_HOST} !^www\. [NC]
+  RewriteCond %{HTTP_HOST} altorentalresidences\.sk$ [NC]
+  RewriteRule ^ https://www.altorentalresidences.sk%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+
+# ---------- MIME typy ----------
+# Staršie Apache konfigurácie tieto typy nepoznajú a potom napr. woff2
+# príde ako application/octet-stream a prehliadač font zahodí.
+<IfModule mod_mime.c>
+  AddType font/woff2                  .woff2
+  AddType font/otf                    .otf
+  AddType image/svg+xml               .svg
+  AddType image/x-icon                .ico
+  AddType video/mp4                   .mp4
+  AddType application/manifest+json   .webmanifest
+  AddType text/javascript             .js
+  AddType text/css                    .css
+</IfModule>
+
+
+# ---------- kompresia ----------
+# AddOutputFilterByType poskytuje mod_filter (nie mod_deflate), preto je
+# podmienka na ňom — inak by hosting s mod_deflate bez mod_filter spadol na 500.
+<IfModule mod_filter.c>
+  <IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+    AddOutputFilterByType DEFLATE text/javascript application/javascript
+    AddOutputFilterByType DEFLATE application/json application/xml
+    AddOutputFilterByType DEFLATE image/svg+xml application/manifest+json
+    # jpg/png/mp4/woff2 sú už komprimované — opätovné balenie len žerie CPU
+  </IfModule>
+
+  <IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml
+    AddOutputFilterByType BROTLI_COMPRESS text/javascript application/javascript
+    AddOutputFilterByType BROTLI_COMPRESS application/json application/xml
+    AddOutputFilterByType BROTLI_COMPRESS image/svg+xml application/manifest+json
+  </IfModule>
+</IfModule>
+
+
+# ---------- cache ----------
+# POZOR: css/js/obrázky nemajú v názve hash (main.css, nie main.a1b2c3.css),
+# takže dlhá cache by po nasadení držala starú verziu u vracajúcich sa
+# návštevníkov. Preto:
+#   HTML   — nikdy necachovať (musí sa vždy overiť)
+#   CSS/JS — krátko + povinná revalidácia, aby zmeny nasadli hneď
+#   fonty  — rok (obsah sa nemení)
+#   médiá  — 30 dní (fotky bytov sa pri zmene ponuky prepisujú)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                          "access plus 1 month"
+
+  ExpiresByType text/html                 "access plus 0 seconds"
+
+  # robots.txt a sitemap.xml sa musia dať aktualizovať rýchlo — s mesačnou
+  # cache by roboti a CDN držali starú verziu aj po pridaní stránok
+  ExpiresByType text/plain                "access plus 1 hour"
+  ExpiresByType application/xml           "access plus 1 hour"
+  ExpiresByType text/xml                  "access plus 1 hour"
+
+  # odpoveď z contact.php sa nesmie cachovať vôbec
+  ExpiresByType application/json          "access plus 0 seconds"
+
+  ExpiresByType text/css                  "access plus 1 hour"
+  ExpiresByType text/javascript           "access plus 1 hour"
+  ExpiresByType application/javascript    "access plus 1 hour"
+
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType font/otf                  "access plus 1 year"
+
+  ExpiresByType image/jpeg                "access plus 30 days"
+  ExpiresByType image/png                 "access plus 30 days"
+  ExpiresByType image/svg+xml             "access plus 30 days"
+  ExpiresByType image/x-icon              "access plus 30 days"
+  ExpiresByType video/mp4                 "access plus 30 days"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.(woff2|otf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "^(robots\.txt|sitemap\.xml)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.php$">
+    Header set Cache-Control "no-store"
+  </FilesMatch>
+  # ETagy sú pri viacserverovom hostingu nespoľahlivé, Last-Modified stačí
+  Header unset ETag
+</IfModule>
+<IfModule mod_headers.c>
+  FileETag None
+</IfModule>
+
+
+# ---------- bezpečnostné hlavičky ----------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+
+  # HSTS zapnite až keď je https overene funkčné na www aj bez www —
+  # po nasadení sa z neho nedá rýchlo vycúvať (prehliadač si ho pamätá).
+  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # CSP zámerne nie je nastavená: web načítava Google Tag Manager a cez neho
+  # si klient pridáva ďalšie skripty (GA4, Ads). Striktná CSP by ich ticho
+  # blokovala. Ak ju budete chcieť, treba ju ladiť spolu s obsahom kontajnera.
+</IfModule>
+
+
+# ---------- ochrana citlivých súborov ----------
+<FilesMatch "^\.(htaccess|htpasswd|env|git.*)">
+  Require all denied
+</FilesMatch>
+
+# konfigurácia s heslom na SMTP sa nesmie dať stiahnuť
+<FilesMatch "^contact\.config\.php$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule (^|/)\.(?!well-known) - [F,L]
+</IfModule>

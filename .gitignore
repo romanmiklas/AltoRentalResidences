@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+._*
+
+# produkčné balíky
+*.zip
+
+# dočasné testovacie stránky (vznikajú pri ladení)
+_*.html
+
+# POZOR: prístupové údaje na SMTP — do repozitára nepatria.
+# V repe je len vzor contact.config.example.php; na serveri sa
+# súbor premenuje na contact.config.php a doplní sa doň heslo.
+contact.config.php

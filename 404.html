@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Motion: trieda .motion zapína vstupne animacie (počiatočný stav je v CSS,
+     takže obsah nikdy nepreblikne). Nepridá sa pri prefers-reduced-motion.
+     Poistka: ak sa js/motion.js nenačíta, triedu po 3 s odstránime. -->
+<script>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('motion');
+    setTimeout(function(){
+      if (!window.__altoMotion) document.documentElement.classList.remove('motion');
+    }, 3000);
+  }
+</script>
+
+<!-- Google Consent Mode v2 — predvolene DENIED, kým používateľ neudelí súhlas
+     (aktualizuje ho js/consent.js). Musí byť pred GTM. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent','default',{
+    ad_storage:'denied',
+    ad_user_data:'denied',
+    ad_personalization:'denied',
+    analytics_storage:'denied',
+    functionality_storage:'granted',
+    security_storage:'granted',
+    wait_for_update:500
+  });
+</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-K6T9N5GS');</script>
+<!-- End Google Tag Manager -->
+
+<title>Stránka sa nenašla | ALTO Rental Residences</title>
+<meta name="description" content="Ľutujeme, ale na tejto stránke sa nič nenachádza.">
+<meta name="robots" content="noindex, follow">
+<!-- favicon (olivový squircle s „A") -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="canonical" href="https://www.altorentalresidences.sk/404.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ALTO Rental Residences">
+<meta property="og:locale" content="sk_SK">
+<meta property="og:url" content="https://www.altorentalresidences.sk/404.html">
+<meta property="og:title" content="Stránka sa nenašla | ALTO Rental Residences">
+<meta property="og:description" content="Ľutujeme, ale na tejto stránke sa nič nenachádza.">
+<meta property="og:image" content="https://www.altorentalresidences.sk/assets/img/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.altorentalresidences.sk/assets/img/og-image.jpg">
+<link rel="stylesheet" href="css/main.css">
+<link rel="preload" href="assets/fonts/FKRomanStandard-Light.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/SctoGroteskB-Medium.woff2" as="font" type="font/woff2" crossorigin>
+</head>
+<body class="page-legal page-error">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K6T9N5GS"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<header class="header" id="header">
+    <div class="header__logo">
+      <a href="index.html" aria-label="ALTO — domov">
+        <img src="assets/icons/logo.svg" alt="ALTO" class="header__logo-img">
+      </a>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="nav__row">
+        <button class="nav__projects" type="button" id="navProjects" aria-expanded="false" aria-controls="navDropdown">
+          <span>Projekty</span>
+          <img class="nav__dot" src="assets/icons/dot.svg" alt="" width="6" height="6">
+        </button>
+        <a class="nav__link" href="index.html#standard">Štandard</a>
+        <a class="nav__link" href="index.html#ponuka">Ponuka</a>
+        <a class="nav__link" href="index.html#lokalita">Lokalita</a>
+        <a class="nav__link" href="index.html#postup">Proces</a>
+        <a class="nav__link" href="index.html#kontakt">Kontakt</a>
+        <button class="nav__lang" type="button" id="navLang" aria-label="Jazyk">
+          <span id="navLangLabel">SK</span>
+          <img class="nav__dot" src="assets/icons/dot.svg" alt="" width="6" height="6">
+        </button>
+        <a href="index.html#ponuka" class="btn btn--olive nav__cta">Zobraziť ponuku</a>
+        <button class="nav__burger" type="button" id="navBurger"
+                aria-expanded="false" aria-controls="mobileMenu" aria-label="Otvoriť menu">
+          <img src="assets/icons/menu-dots.svg" alt="" width="14" height="14">
+        </button>
+      </div>
+
+      <div class="nav__dropdown" id="navDropdown">
+        <div class="nav__dropdown-inner">
+          <a class="nav-offer" href="index.html#projekty" data-project="skypark">
+            <span class="nav-offer__thumb"><img src="assets/img/project-skypark.jpg" alt="" loading="lazy" decoding="async"></span>
+            <span class="nav-offer__text">
+              <span class="nav-offer__title">
+                <span class="nav-offer__name">SKY PARK</span>
+                <span class="nav-offer__arrow"><img src="assets/icons/arrow-tiny.svg" alt="" width="8" height="8"></span>
+              </span>
+              <span class="nav-offer__desc">Továrenská 14 • Staré mesto • Bratislava</span>
+            </span>
+          </a>
+          <a class="nav-offer" href="index.html#projekty" data-project="florian">
+            <span class="nav-offer__thumb"><img src="assets/img/project-florian.jpg" alt="" loading="lazy" decoding="async"></span>
+            <span class="nav-offer__text">
+              <span class="nav-offer__title">
+                <span class="nav-offer__name">FLORIAN</span>
+                <span class="nav-offer__arrow"><img src="assets/icons/arrow-tiny.svg" alt="" width="8" height="8"></span>
+              </span>
+              <span class="nav-offer__desc">Školská 2 • Staré mesto • Bratislava</span>
+            </span>
+          </a>
+        </div>
+      </div>
+  </nav>
+</header>
+
+<!-- ================= MOBILNÉ MENU (fullscreen, Figma 70:7513) ================= -->
+<div class="mmenu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <div class="mmenu__pill">
+    <div class="mmenu__head">
+      <a class="mmenu__logo" href="index.html" aria-label="ALTO — domov">
+        <img src="assets/icons/logo.svg" alt="ALTO">
+      </a>
+      <button class="mmenu__close" type="button" id="mmenuClose" aria-label="Zavrieť menu">
+        <img src="assets/icons/menu-dots.svg" alt="" width="14" height="14">
+      </button>
+    </div>
+
+    <div class="mmenu__projects">
+      <a class="mmenu__project" href="index.html#projekty">
+        <span class="mmenu__thumb"><img src="assets/img/project-skypark.jpg" alt="" loading="lazy" decoding="async"></span>
+        <span class="mmenu__project-text">
+          <span class="mmenu__project-title">
+            SKY PARK
+            <span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span>
+          </span>
+          <span class="mmenu__project-desc">Továrenská 14 • Staré mesto • Bratislava</span>
+        </span>
+      </a>
+      <a class="mmenu__project" href="index.html#projekty">
+        <span class="mmenu__thumb"><img src="assets/img/project-florian.jpg" alt="" loading="lazy" decoding="async"></span>
+        <span class="mmenu__project-text">
+          <span class="mmenu__project-title">
+            FLORIAN
+            <span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span>
+          </span>
+          <span class="mmenu__project-desc">Školská 2 • Staré mesto • Bratislava</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="mmenu__bottom">
+      <nav class="mmenu__links" aria-label="Hlavné menu">
+        <a class="mmenu__link" href="index.html#standard">Štandard<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+        <a class="mmenu__link" href="index.html#ponuka">Ponuka<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+        <a class="mmenu__link" href="index.html#lokalita">Lokalita<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+        <a class="mmenu__link" href="index.html#postup">Proces<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+        <a class="mmenu__link" href="index.html#kontakt">Kontakt<span class="mmenu__arrow"><img src="assets/icons/arrow-tiny-white.svg" alt="" width="11" height="11"></span></a>
+      </nav>
+
+      <div class="mmenu__actions">
+        <div class="mmenu__lang" role="radiogroup" aria-label="Jazyk">
+          <button type="button" class="mmenu__lang-btn is-active" role="radio" aria-checked="true" data-lang="sk">Slovak</button>
+          <button type="button" class="mmenu__lang-btn" role="radio" aria-checked="false" data-lang="en">English</button>
+        </div>
+        <a href="index.html#ponuka" class="mmenu__cta">Zobraziť ponuku</a>
+      </div>
+
+      <p class="mmenu__copy">2026 © ALTO Real Estate.<br>All rights reserved.</p>
+    </div>
+  </div>
+</div>
+
+<main class="errpage">
+  <div class="errpage__inner" data-reveal-group="load" data-reveal-step="100" data-reveal-delay="160">
+    <span class="errpage__code" data-reveal="lg" aria-hidden="true">404</span>
+    <h1 class="errpage__title gradient-text" data-reveal="lg">Ľutujeme, ale na tejto stránke <br>sa nič nenachádza.</h1>
+    <a class="btn btn--olive btn--lg errpage__btn" href="index.html" data-reveal>Späť na domovskú stránku</a>
+  </div>
+</main>
+
+<footer class="footer" data-reveal="fade">
+  <p>2026 © ALTO Real Estate. All rights reserved.</p>
+  <div class="footer__links">
+    <a href="zasady-cookies.html" data-consent-open>Nastavenia cookies</a>
+    <a href="zasady-spracovania-osobnych-udajov.html">Zásady spracúvania osobných údajov</a>
+  </div>
+</footer>
+
+<!-- ================= COOKIE LIŠTA + SPRÁVA SÚHLASU ================= -->
+<div class="consent" id="cookieConsent" role="dialog" aria-labelledby="consentTitle" hidden>
+  <div class="consent__card" data-view="intro">
+    <div class="consent__head">
+      <img src="assets/icons/cookie.svg" alt="" width="20" height="20">
+      <span class="consent__title" id="consentTitle">Súbory cookies</span>
+    </div>
+
+    <p class="consent__text">Nevyhnutné cookies používame vždy. So súhlasom pridáme analytické a reklamné, aby sme web zlepšovali. <a href="zasady-cookies.html">Zásady používania cookies</a></p>
+
+    <div class="consent__list">
+      <label class="consent__switch consent__switch--locked">
+        <span class="consent__switch-text">
+          <span class="consent__switch-name">Nevyhnutné</span>
+          <span class="consent__switch-desc">Potrebné pre chod webu, nedajú sa vypnúť.</span>
+        </span>
+        <input type="checkbox" checked disabled>
+        <span class="consent__track" aria-hidden="true"></span>
+      </label>
+      <label class="consent__switch">
+        <span class="consent__switch-text">
+          <span class="consent__switch-name">Analytické</span>
+          <span class="consent__switch-desc">Merajú návštevnosť a výkon webu.</span>
+        </span>
+        <input type="checkbox" data-cat="analytics">
+        <span class="consent__track" aria-hidden="true"></span>
+      </label>
+      <label class="consent__switch">
+        <span class="consent__switch-text">
+          <span class="consent__switch-name">Reklamné</span>
+          <span class="consent__switch-desc">Umožňujú cielenú reklamu a remarketing.</span>
+        </span>
+        <input type="checkbox" data-cat="ads">
+        <span class="consent__track" aria-hidden="true"></span>
+      </label>
+    </div>
+
+    <div class="consent__actions">
+      <button type="button" class="btn btn--olive consent__accept">Prijať všetko</button>
+      <button type="button" class="btn btn--olive consent__save">Uložiť voľby</button>
+      <div class="consent__row">
+        <button type="button" class="btn btn--outline consent__settings-btn" aria-expanded="false">Nastavenia</button>
+        <button type="button" class="btn btn--outline consent__reject">Odmietnuť</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/i18n.js" defer></script>
+<script src="js/motion.js" defer></script>
+<script src="js/main.js" defer></script>
+<script src="js/consent.js" defer></script>
+</body>
+</html>

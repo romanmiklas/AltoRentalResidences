@@ -1,0 +1,2089 @@
+/* ============================================================
+   ALTO — Apartment Rental
+   Design tokens prevzaté z Figmy (ALTO Color palette)
+   ============================================================ */
+
+/* ---------- fonts ----------
+   Licencované fonty vlož do assets/fonts/ pod týmito názvami.
+   Kým chýbajú, použijú sa systémové fallbacky. */
+@font-face{
+  font-family:"FK Roman Standard";
+  src:url("../assets/fonts/FKRomanStandard-Light.woff2") format("woff2"),
+      url("../assets/fonts/FKRomanStandard-Light.otf") format("opentype");
+  font-weight:300;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:"Scto Grotesk B";
+  src:url("../assets/fonts/SctoGroteskB-Medium.woff2") format("woff2"),
+      url("../assets/fonts/SctoGroteskB-Medium.otf") format("opentype");
+  font-weight:500;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:"Scto Grotesk B";
+  src:url("../assets/fonts/SctoGroteskB-Bold.woff2") format("woff2"),
+      url("../assets/fonts/SctoGroteskB-Bold.otf") format("opentype");
+  font-weight:700;font-style:normal;font-display:swap;
+}
+
+:root{
+  /* ALTO Color palette */
+  --alto-white:#ffffff;
+  --alto-black:#2d2a2a;        /* ALTO Čierna */
+  --alto-dark-olive:#717666;   /* ALTO Tmavá Olivová */
+  --alto-olive:#888d7c;        /* ALTO Olivová */
+  --alto-dark-grey:#8a8585;    /* ALTO Tmavá Sivá */
+  --alto-light-grey:#504b4b;   /* ALTO Svetlá Sivá */
+  --terracota:#844a32;         /* terracota-750 */
+  --stone:#fff6f2;             /* stone-100 */
+  /* v02: neutrálne sivé pozadia (background-100/200) */
+  --light-green:#f3f2f2;       /* background-100 */
+  --tag-grey:#e6e5e5;          /* background-200 */
+  --tag-green:#f3f2f2;
+  --stone-muted:rgba(56,49,46,.4);  /* stone-900 muted */
+  --brand-black-40:rgba(80,75,75,.4);
+
+  --stroke:rgba(113,118,102,.2);
+  --stroke-w:.5px;
+  --blur:20px;
+
+  --gutter:24px;
+  --page-pad:40px;
+  --content-max:1600px;
+  /* full-bleed pozadia, obsah max 1600px na stred */
+  --pad-x:max(var(--page-pad), calc((100% - var(--content-max)) / 2));
+
+  --font-serif:"FK Roman Standard","Times New Roman",Georgia,serif;
+  --font-sans:"Scto Grotesk B","Helvetica Neue",Helvetica,Arial,sans-serif;
+
+  --ease-soft:cubic-bezier(.33,1,.68,1);
+
+  /* --- motion: vstupné animácie ---------------------------------
+     Pôvodne tu bol quint-out / expo-out — tie prejdú ~76 % dráhy
+     už v prvej štvrtine času, čo pôsobí trhane. Zmiernené na
+     cubic-out (rovnaká krivka ako --ease-soft) a quart-out pre
+     veľké prvky, plus dlhšie trvania. */
+  --ease-entrance:cubic-bezier(.33,1,.68,1);      /* cubic-out */
+  --ease-entrance-lg:cubic-bezier(.25,1,.5,1);    /* quart-out */
+  --dur-micro:420ms;
+  --dur-base:760ms;
+  --dur-lg:1000ms;
+  --reveal-shift:20px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+/* kotvy z navpillu nesmú skončiť pod sticky headerom (88px v scrollnutom stave) */
+#projekty,#typy,#standard,#ponuka,#lokalita,#galeria,#postup,#kontakt{scroll-margin-top:88px}
+body{
+  font-family:var(--font-sans);
+  font-weight:500;
+  color:var(--alto-black);
+  background:var(--light-green);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+/* SVG ikony sa renderujú v presnej intrinsic (Figma) veľkosti, centrované v boxe.
+   Zabráni deformácii (preserveAspectRatio) aj nesprávnemu zväčšeniu malých glyfov. */
+img[src$=".svg"]{object-fit:none;object-position:center}
+/* logá, ktorých box môže byť menší ako glyf, sa musia zmestiť celé
+   (rovnaká špecificita ako svg rule + neskorší zdroj => override) */
+img.header__logo-img,
+.mmenu__logo img{object-fit:contain;object-position:left center}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+ul{list-style:none}
+
+/* ---------- typographic helpers ---------- */
+
+/* v02: gradientové headliny (olivová -> čierna / biela) */
+.gradient-text{
+  background:linear-gradient(to left,var(--alto-olive) 35.8%,var(--alto-black) 64.4%);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;
+}
+.gradient-text-light{
+  background:linear-gradient(to left,var(--alto-olive) 35.8%,var(--alto-white) 98.3%);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  height:40px;padding:10px 20px;border-radius:90px;
+  font-family:var(--font-sans);font-size:14px;font-weight:500;
+  letter-spacing:.28px;line-height:1.4;white-space:nowrap;
+  transition:background-color .25s var(--ease-soft),border-color .25s,color .25s,transform .2s;
+}
+.btn:active{transform:scale(.97)}
+.btn--olive{background:var(--alto-dark-olive);color:var(--alto-white)}
+.btn--olive:hover{background:var(--alto-olive)}
+.btn--glass{
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  background:rgba(255,255,255,.2);
+  border:.5px solid rgba(255,255,255,.4);
+  color:var(--alto-white);
+}
+.btn--glass:hover{background:rgba(255,255,255,.32)}
+.btn--outline{
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:var(--stroke-w) solid var(--stroke);
+  color:var(--alto-light-grey);background:transparent;
+}
+.btn--outline:hover{background:var(--light-green)}
+.btn--lg{height:48px;padding:10px 24px;font-size:16px;letter-spacing:0;line-height:1.3}
+
+/* TAG — jednotný komponent podľa Figmy (tag / button nad fotkou).
+   Sklo brand-black-40 + blur 10, radius 4, výška 32, Label-L1.
+   Používa sa v galérii, na kartách projektov aj na listing kartách. */
+.chip{
+  display:inline-flex;align-items:center;gap:8px;
+  height:32px;padding:0 16px;border-radius:4px;
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;
+  white-space:nowrap;
+}
+.chip--dark{
+  background:var(--brand-black-40);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:var(--alto-white);
+}
+
+.tag{
+  display:inline-flex;align-items:center;height:32px;padding:8px 16px;
+  border-radius:34px;background:var(--light-green);
+  font-size:14px;letter-spacing:.28px;color:var(--alto-olive);white-space:nowrap;
+}
+
+/* ============================================================
+   00 HEADER (vo vnútri hero)
+   ============================================================ */
+/* sticky cez celý web; hero sa podň podsúva (negatívny margin) */
+/* Header: v úvode 104px (obsah zarovnaný s 16px rámikom hero videa),
+   po scrollnutí sa "zmrští" na 88px. Layoutová výška ostáva konštantná
+   a mení sa len vnútorný padding — tým sa obsah stránky nikdy neposunie. */
+.header{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:var(--gutter);
+  height:104px;margin-bottom:-104px;
+  padding:40px 40px 24px;                 /* 104px stav */
+  transition:padding .35s var(--ease-soft);
+}
+.header.is-compact{padding:24px 40px 40px}   /* 88px stav */
+.header.is-stuck .header__logo-img{filter:brightness(0) saturate(0) invert(12%)}
+
+/* ---------- burger (len mobil) + fullscreen menu (Figma 70:7513) ---------- */
+.nav__burger{
+  display:none;
+  width:40px;height:40px;border-radius:20px;
+  align-items:center;justify-content:center;flex:0 0 auto;
+  background:var(--brand-black-40);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:background .25s;
+}
+.nav__burger img{width:14px;height:14px;object-fit:contain}
+
+.mmenu{
+  position:fixed;inset:0;z-index:200;
+  --mpad:24px;
+}
+.mmenu[hidden]{display:none}
+/* Kontajner sa v animácii roztiahne priamo z navpillu do fullscreenu —
+   štartovná geometria (--nx/--ny/--nw/--nh) sa dopĺňa z JS podľa
+   skutočnej pozície navpillu, takže prechod je spojitý. */
+.mmenu__pill{
+  position:absolute;
+  left:var(--nx,0);top:var(--ny,0);
+  width:var(--nw,100%);height:var(--nh,100%);
+  display:flex;flex-direction:column;gap:16px;
+  border-radius:24px;
+  background:var(--brand-black-40);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:.5px solid rgba(255,255,255,.2);
+  overflow:hidden;
+  transition:left .5s var(--ease-soft),top .5s var(--ease-soft),
+             width .5s var(--ease-soft),height .5s var(--ease-soft);
+}
+.mmenu.is-open .mmenu__pill{
+  left:var(--mpad);top:var(--mpad);
+  width:calc(100% - var(--mpad) * 2);
+  height:calc(100% - var(--mpad) * 2);
+}
+.mmenu__pill>*{opacity:0;transition:opacity .25s ease}
+.mmenu.is-open .mmenu__pill>*{opacity:1;transition:opacity .3s ease .22s}
+
+.mmenu__head{display:flex;align-items:center;justify-content:space-between;padding-left:24px;flex:0 0 auto}
+.mmenu__logo{display:flex;align-items:center;height:49px}
+.mmenu__logo img{height:24px;width:auto;filter:brightness(0) invert(1)}
+.mmenu__close{
+  margin:4px;width:40px;height:40px;border-radius:20px;flex:0 0 auto;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--brand-black-40);
+}
+.mmenu__close img{width:14px;height:14px;object-fit:contain}
+
+.mmenu__projects{padding:32px 0 24px;flex:0 0 auto}
+.mmenu__project{display:flex;align-items:flex-start;gap:0;padding:0 24px}
+.mmenu__project>*{pointer-events:none}
+.mmenu__project+.mmenu__project{margin-top:0}
+.mmenu__project::after{content:none}
+.mmenu__thumb{
+  flex:0 0 80px;width:80px;height:80px;border-radius:8px;
+  overflow:hidden;background:var(--tag-grey);
+}
+.mmenu__thumb img{width:100%;height:100%;object-fit:cover}
+.mmenu__project-text{
+  flex:1 1 auto;min-width:0;height:80px;
+  display:flex;flex-direction:column;justify-content:center;gap:10px;
+  padding-left:20px;
+}
+.mmenu__project-title{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  font-family:var(--font-serif);font-weight:300;
+  font-size:24px;line-height:1;letter-spacing:-.72px;color:var(--alto-white);
+}
+.mmenu__project-desc{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.255px;
+  color:rgba(255,255,255,.4);
+}
+/* deliaca linka pod položkou projektu */
+.mmenu__project{position:relative;padding-top:16px;padding-bottom:16px}
+.mmenu__project::before{
+  content:"";position:absolute;left:24px;right:24px;bottom:0;
+  border-bottom:1px solid rgba(255,255,255,.4);
+}
+
+.mmenu__arrow{
+  flex:0 0 32px;width:32px;height:32px;border-radius:40px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:.5px solid rgba(255,255,255,.2);
+}
+.mmenu__arrow img{width:10.67px;height:10.67px;object-fit:contain}
+
+.mmenu__bottom{
+  flex:1 1 auto;min-height:0;
+  display:flex;flex-direction:column;gap:24px;
+  padding:0 24px 24px;
+}
+.mmenu__links{display:flex;flex-direction:column;gap:16px}
+.mmenu__link{
+  display:flex;align-items:center;justify-content:space-between;
+  height:32px;
+  font-family:var(--font-sans);font-weight:500;
+  font-size:24px;line-height:1.4;color:var(--alto-white);
+}
+.mmenu__actions{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.mmenu__lang{
+  display:flex;gap:2px;height:48px;padding:4px;border-radius:48px;
+  background:rgba(255,255,255,.2);
+}
+.mmenu__lang-btn{
+  flex:1 1 0;min-width:0;border-radius:40px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:transparent;
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;color:var(--alto-white);
+  transition:background .2s,color .2s;
+}
+.mmenu__lang-btn.is-active{background:var(--light-green);color:var(--alto-dark-olive)}
+.mmenu__cta{
+  display:flex;align-items:center;justify-content:center;
+  height:48px;border-radius:90px;background:var(--alto-dark-olive);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;color:var(--alto-white);
+}
+.mmenu__copy{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;
+  color:rgba(255,255,255,.4);
+}
+body.is-menu-open{overflow:hidden}
+.header__logo{display:flex;align-items:center;height:40px}
+.header__logo-img{height:29px;width:auto}
+
+/* ---------- nav pill (v03) ---------- */
+.nav{
+  /* Kotva na vrch — inak by header (align-items:center) roztiahol pill
+     symetricky z centra a dropdown by sa vysunul aj hore. */
+  align-self:flex-start;
+  display:flex;flex-direction:column;align-items:stretch;
+  padding:1px;
+  /* 25px = tesne pod polovicou zavretej výšky (51px) => vizuálny pill
+     bez clampovania. Pôvodných 72px prehliadač pri zavretom stave orezal
+     na polovicu výšky a pri rozbalení clamp odskočil => glitch. */
+  border-radius:25px;
+  background:var(--brand-black-40);
+  border:.5px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:padding-bottom .4s var(--ease-soft),border-radius .4s var(--ease-soft);
+}
+.nav__row{
+  display:flex;align-items:center;gap:16px;
+  height:48px;padding:4px;border-radius:8px;
+}
+.nav__link,.nav__projects,.nav__lang{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font-sans);font-size:14px;font-weight:500;
+  letter-spacing:.28px;line-height:1.4;white-space:nowrap;
+  color:var(--alto-white);
+  transition:opacity .2s,background-color .3s var(--ease-soft);
+}
+.nav__link:hover,.nav__lang:hover{opacity:.75}
+.nav__projects,.nav__lang{align-self:stretch;border-radius:24px}
+.nav__projects{padding:0 12px;background:rgba(255,255,255,.2)}
+.nav__lang{padding:0}
+.nav__dot{flex:0 0 auto;width:6px;height:6px}
+.nav__cta{height:40px;padding:10px 16px;flex:0 0 auto}
+
+/* ---------- zbalený navpill (desktop) ----------
+   Po opustení hero sa pill stiahne do rovnakého tvaru ako na mobile:
+   ikona menu + „Zobraziť ponuku". Nie je to mobilné fullscreen menu —
+   kliknutie na ikonu len rozbalí pill späť do plnej podoby.
+   Šírka sa animuje cez grid-template-columns 1fr→0fr (rovnaký princíp
+   ako akordeón typov bytov); pill sa tým plynule zúži sám od seba. */
+.nav__items{align-self:stretch}
+/* width:max-content drží prirodzenú šírku aj vtedy, keď je obal zúžený
+   na nulu — inak by sa obsah zalomil a nedalo by sa z čoho merať. */
+.nav__items-inner{
+  /* height:100% je kľúčové — bez neho má obal len výšku textu a
+     align-self:stretch na „Projekty"/„SK" ich prestane ťahať na 40 px */
+  display:flex;align-items:center;gap:16px;height:100%;
+  width:max-content;
+}
+@media (min-width:1025px){
+  .nav__items{
+    overflow:hidden;
+    /* --nav-items-w dopĺňa JS z nameranej šírky obsahu; bez neho ostáva
+       auto, takže pri vypnutom JS je pill jednoducho vždy plný. */
+    width:var(--nav-items-w,auto);
+    transition:width .45s var(--ease-soft),
+               margin-right .45s var(--ease-soft),
+               opacity .25s ease;
+  }
+  .header.is-collapsed .nav__items{
+    width:0;
+    margin-right:-16px;          /* zruší gap riadku, nech neostane diera */
+    opacity:0;
+  }
+  /* Zavretý dropdown síce nie je vidieť, ale jeho obsah stále určuje
+     max-content šírku pillu (~393 px) a bránil by zbaleniu. V zbalenom
+     stave sa aj tak nedá otvoriť — tlačidlo Projekty je schované. */
+  .header.is-collapsed .nav__dropdown{display:none}
+
+  /* ikona menu sa v zbalenom stave objaví s krátkym prelnutím */
+  .header.is-collapsed .nav__burger{
+    display:inline-flex;
+    animation:alto-fade-in .3s var(--ease-soft) both;
+  }
+}
+
+/* dropdown — vyrolovanie v rámci pill-u */
+.nav__dropdown{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .4s var(--ease-soft);
+}
+.nav__dropdown-inner{
+  overflow:hidden;min-height:0;
+  display:flex;flex-direction:column;
+}
+/* medzera pod riadkom menu — súčasť obsahu, aby sa pri zavretí zrolovala tiež */
+.nav__dropdown-inner > :first-child{margin-top:10px}
+.nav.is-open{padding-bottom:8px;border-radius:22px}
+/* dropdown má vlastný, konštantný radius — nededí animujúci sa radius pill-u */
+.nav__dropdown{border-radius:22px}
+.nav.is-open .nav__dropdown{grid-template-rows:1fr}
+.nav.is-open .nav__projects{background:var(--brand-black-40)}
+
+.nav-offer{
+  display:flex;align-items:stretch;gap:0;
+  margin:0 8px;padding:8px;border-radius:16px;
+  transition:background-color .25s;
+}
+.nav-offer:hover{background:rgba(255,255,255,.4)}
+.nav-offer__thumb{
+  flex:0 0 auto;width:80px;height:80px;
+  border-radius:8px;overflow:hidden;background:var(--tag-grey);
+}
+.nav-offer__thumb img{width:100%;height:100%;object-fit:cover}
+.nav-offer__text{
+  flex:1 1 auto;min-width:0;height:80px;
+  display:flex;flex-direction:column;justify-content:center;gap:10px;
+  padding:24px 14px 24px 20px;overflow:hidden;
+}
+.nav-offer__title{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-offer__name{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:24px;line-height:1;letter-spacing:-.72px;
+  color:var(--alto-white);white-space:nowrap;
+}
+.nav-offer__arrow{
+  flex:0 0 auto;width:24px;height:24px;border-radius:30px;
+  border:.5px solid rgba(255,255,255,.2);
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:transform .3s var(--ease-soft),background-color .25s;
+}
+.nav-offer__arrow img{width:8px;height:8px}
+.nav-offer:hover .nav-offer__arrow{transform:translate(2px,-2px);background:rgba(255,255,255,.15)}
+.nav-offer__desc{
+  font-size:14px;line-height:1.2;letter-spacing:.255px;
+  color:rgba(255,255,255,.4);white-space:nowrap;
+}
+
+/* ============================================================
+   01 HERO (v02: zaoblený rám na sivom pozadí)
+   ============================================================ */
+.hero-frame{padding:16px;background:var(--light-green)}
+.hero{
+  position:relative;
+  height:max(calc(100svh - 32px),760px);
+  background:var(--alto-black);
+  border-radius:20px;
+  overflow:hidden;
+}
+.hero__media{position:absolute;inset:0}
+.hero__media video{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .8s ease;
+}
+.hero__video.is-active{opacity:1}
+.hero__overlay{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+
+/* paddingy sú viazané na okno videa (nie na stránkový grid) */
+.hero__inner{
+  position:relative;z-index:2;height:100%;
+  display:flex;gap:var(--gutter);align-items:center;
+  padding:104px 40px 40px;
+}
+.hero__left{
+  flex:1 1 0;min-width:0;height:100%;
+  display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
+}
+.hero__left .hero__headline,
+.hero__left .hero__buttons{max-width:537px}
+.hero__headline{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:clamp(30px,2.8vw,40px);line-height:1.14;letter-spacing:-1.2px;
+  color:var(--alto-white);
+  margin-bottom:48px;
+}
+.hero__buttons{display:flex;gap:16px;flex-wrap:wrap}
+.hero__right{
+  flex:1 1 0;min-width:0;height:100%;
+  display:flex;align-items:flex-end;justify-content:flex-end;
+}
+.hero__scroll{
+  font-size:14px;font-weight:500;letter-spacing:.28px;line-height:1.4;
+  color:var(--alto-white);text-decoration:underline;text-underline-offset:3px;
+  transition:opacity .2s;
+}
+.hero__scroll:hover{opacity:.7}
+
+/* ============================================================
+   SECTION 02 — KARTY PROJEKTOV (v02: pod hero videom)
+   hover: fotka sa stiahne na polovicu, panel s textom narastie
+   ============================================================ */
+.s02{
+  display:flex;gap:8px;align-items:stretch;
+  padding:80px var(--pad-x);
+  background:var(--light-green);
+}
+.project-card{
+  flex:1 1 0;min-width:0;height:640px;
+  display:flex;flex-direction:column;gap:4px;
+  padding:4px;border-radius:12px;
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.project-card__media{
+  position:relative;flex:1 1 0;min-height:0;overflow:hidden;border-radius:8px;
+}
+.project-card__media img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:transform .6s var(--ease-soft);
+}
+.project-card:hover .project-card__media img{transform:scale(1.04)}
+.project-card__media .chip{position:absolute;left:20px;bottom:20px}
+/* Základ (dotyk / kompakt): celý detail je viditeľný. Rozbaľovanie po
+   hoveri sa zapína len tam, kde hover dáva zmysel — v bloku nižšie. */
+.project-card__body{
+  flex:0 0 auto;
+  display:flex;flex-direction:column;gap:24px;
+  padding:24px;border-radius:8px;
+  background:var(--tag-grey);
+}
+.project-card__title{flex:0 0 auto}
+.project-card__name{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:32px;line-height:1;letter-spacing:-.96px;
+  color:var(--alto-dark-olive);white-space:nowrap;
+}
+.project-card__detail-inner{display:flex;flex-direction:column;gap:24px}
+.project-card__desc{
+  font-size:16px;line-height:1.4;
+  color:var(--alto-olive);
+}
+.project-card__location{
+  display:flex;gap:10px;align-items:center;
+  font-size:18px;line-height:1.2;letter-spacing:.255px;
+  color:var(--brand-black-40);
+}
+.project-card__location img{flex:0 0 auto;width:24px;height:24px}
+.project-card__actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* Hover-rozbaľovanie detailu — len na ukazovacích zariadeniach (nie dotyk)
+   a v desktopovom rozložení. Zbalený stav ukazuje iba názov projektu,
+   po hoveri (alebo fokuse cez tab) sa spustí lokalita, popis a tlačidlá. */
+@media (min-width:1025px) and (hover:hover){
+  .project-card__body{gap:0}
+  .project-card__detail{
+    display:grid;grid-template-rows:0fr;overflow:hidden;
+    opacity:0;margin-top:0;
+    transition:grid-template-rows .55s var(--ease-soft),opacity .35s ease,margin-top .55s var(--ease-soft);
+  }
+  .project-card__detail-inner{min-height:0}
+  .project-card:hover .project-card__detail,
+  .project-card:focus-within .project-card__detail{
+    grid-template-rows:1fr;opacity:1;margin-top:24px;
+  }
+}
+/* sekundárna akcia — podčiarknutý odkaz na web projektu */
+.project-card__link{
+  background:transparent;color:var(--alto-olive);
+  text-decoration:underline;text-underline-offset:3px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.project-card__link:hover{color:var(--alto-dark-olive)}
+
+/* ============================================================
+   SECTION 2 — TYPY BYTOV
+   ============================================================ */
+.s2{
+  position:relative;
+  height:860px;
+  background:var(--alto-white);
+  display:flex;gap:var(--gutter);align-items:center;justify-content:center;
+  padding:100px var(--pad-x);
+  overflow:hidden;
+}
+.s2__col{position:relative;flex:1 1 0;min-width:0;height:100%}
+.s2__col--center{
+  display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:flex-start;
+}
+.s2__eyebrow{display:flex;justify-content:center;width:100%}
+.s2__list{
+  flex:1;display:flex;flex-direction:column;gap:24px;
+  align-items:center;justify-content:flex-start;width:100%;
+  padding:144px 0;
+}
+.s2__item{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:clamp(36px,4.4vw,64px);line-height:1;letter-spacing:-1.08px;
+  color:var(--alto-dark-olive);text-align:center;width:100%;
+  opacity:.2;transition:opacity .4s ease;
+}
+.s2__item.is-active{
+  opacity:1;
+  background:linear-gradient(to left,var(--alto-olive),var(--alto-black));
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;
+}
+/* akordeón (mobil) — na desktope je + aj panel skrytý */
+.s2__row{width:100%}
+.s2__plus,.s2__panel{display:none}
+
+.s2__photo{
+  position:absolute;
+  background:var(--alto-white);border-radius:6px;overflow:hidden;
+  transition:top .7s var(--ease-soft),bottom .7s var(--ease-soft),
+             width .7s var(--ease-soft),height .7s var(--ease-soft);
+}
+.s2__img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .45s ease;
+}
+.s2__img.is-active{opacity:1}
+
+/* Pozície + rozmery fotiek 1:1 podľa Figmy (4:305).
+   1-izbové a 2-izbové = 330×330, 1,5-izbové a 3-izbové = 345×345. */
+.s2[data-variant="1"]   .s2__photo{width:330px;height:330px}
+.s2[data-variant="1"]   .s2__photo--left {left:0;right:auto;bottom:0;top:auto}
+.s2[data-variant="1"]   .s2__photo--right{right:0;left:auto;top:0;bottom:auto}
+
+.s2[data-variant="1.5"] .s2__photo{width:345px;height:345px}
+.s2[data-variant="1.5"] .s2__photo--left {left:0;right:auto;top:243px;bottom:auto}
+.s2[data-variant="1.5"] .s2__photo--right{right:0;left:auto;top:60px;bottom:auto}
+
+.s2[data-variant="2"]   .s2__photo{width:330px;height:330px}
+.s2[data-variant="2"]   .s2__photo--left {left:0;right:auto;top:108px;bottom:auto}
+.s2[data-variant="2"]   .s2__photo--right{right:0;left:auto;top:236px;bottom:auto}
+
+.s2[data-variant="3"]   .s2__photo{width:345px;height:345px}
+.s2[data-variant="3"]   .s2__photo--left {left:0;right:auto;top:0;bottom:auto}
+.s2[data-variant="3"]   .s2__photo--right{right:0;left:auto;bottom:0;top:auto}
+
+/* ============================================================
+   SECTION 3 — BENEFITY
+   ============================================================ */
+.s3{background:var(--alto-white);padding:40px var(--pad-x)}
+.s3__grid{
+  display:flex;gap:24px;align-items:stretch;
+  height:720px;
+}
+/* medzery v jednotlivých kartách */
+.s3-card--photo{gap:40px}
+.s3-card--olive:not(.s3-card--photo):not(.s3-card--intro),
+.s3-card--black,
+.s3-card--outline:not(.s3-card--photo-sm){gap:40px !important}
+.s3__col{
+  flex:1 1 0;min-width:0;
+  display:flex;flex-direction:column;gap:24px;
+}
+.s3__col--right{justify-content:center}
+.s3__row{flex:1 1 0;min-height:0;display:flex;gap:24px;align-items:stretch}
+.s3__row .s3-card{flex:1 1 0;min-width:0}  /* obe spodné karty rovnaká šírka (fill) */
+
+.s3-card{
+  position:relative;overflow:hidden;
+  border-radius:12px;padding:24px;
+  display:flex;flex-direction:column;
+}
+/* Jemné zväčšenie karty pri hoveri — len na zariadeniach s kurzorom.
+   Karty majú výšku od 162 do 720 px, takže jednotné percento by na tej
+   najväčšej pôsobilo trikrát výraznejšie ako na malých. Mierku preto
+   ladíme podľa výšky tak, aby každá karta narástla o podobný počet
+   pixelov (~4–6 px) — vnem je potom rovnaký naprieč celým bentom. */
+@media (hover:hover){
+  .s3-card{
+    --card-scale:1.02;                        /* nízke karty, 162–204 px */
+    transition:transform .4s var(--ease-soft);
+  }
+  .s3-card--photo-sm{--card-scale:1.016}      /* 346 px */
+  .s3-card--photo{--card-scale:1.012}         /* 492 px */
+  .s3-card--intro{--card-scale:1.008}         /* 720 px */
+
+  .s3-card:hover{
+    transform:scale(var(--card-scale));
+    z-index:2;                                /* nech sa dvíha nad susedov */
+  }
+}
+
+.s3-card--olive{background:var(--alto-olive)}
+.s3-card--black{background:var(--alto-black)}
+.s3-card--outline{
+  border:var(--stroke-w) solid var(--stroke);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.s3-card__text{
+  font-size:18px;line-height:1.4;color:var(--alto-white);
+  max-width:280px;
+}
+.s3-card__text--dark{color:var(--alto-black)}
+.s3-card__icon{flex:0 0 auto;width:24px;height:24px;position:relative}
+
+/* karta s fotkou na pozadí (stĺpec 1, hore) */
+.s3-card--photo{
+  height:492px;flex:0 0 auto;
+  justify-content:flex-start;    /* text hore, fotka na pozadí */
+  background:var(--alto-olive);
+}
+.s3-card__bg{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  pointer-events:none;
+}
+.s3-card--photo::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(102,102,102,0) 89.56%);
+}
+.s3-card--photo .s3-card__text{position:relative;z-index:1}
+
+/* ikonové karty: ikona hore, text dole */
+.s3-card--olive:not(.s3-card--intro):not(.s3-card--photo),
+.s3-card--black,
+.s3-card--outline:not(.s3-card--photo-sm){justify-content:space-between;gap:40px}
+.s3-card--outline:not(.s3-card--photo-sm){justify-content:flex-start;gap:10px}
+
+/* stredný stĺpec s headlinom */
+.s3-card--intro{
+  flex:1 1 0;min-width:0;
+  justify-content:space-between;gap:24px;
+}
+.s3__headline{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:56px;line-height:1;letter-spacing:-1.08px;
+  max-width:397px;
+  background:linear-gradient(-70.21deg,var(--alto-olive) 24.7%,var(--alto-white) 90.13%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.s3-card--intro .s3-card__text{max-width:none}
+
+/* spodná karta s fotkou + glass popiskom */
+.s3-card--photo-sm{flex:1 1 0;min-height:0;justify-content:flex-end;padding:24px}
+.s3-card--photo-sm::after{
+  content:"";position:absolute;inset:0;pointer-events:none;background:rgba(0,0,0,.1);
+}
+.s3-card__glass{
+  position:relative;z-index:1;
+  backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+  background:rgba(138,133,133,.1);
+  border-radius:4px;padding:14px 18px;
+  font-size:18px;line-height:1.4;color:var(--alto-white);
+}
+
+/* ============================================================
+   SECTION 4 — PONUKA + FILTER
+   ============================================================ */
+.s4{background:var(--alto-white);padding:var(--page-pad) var(--pad-x);display:flex;flex-direction:column;gap:40px}
+.s4__headline{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:clamp(40px,4.4vw,64px);line-height:1;letter-spacing:-1.08px;
+  color:var(--alto-dark-olive);text-align:center;
+  padding:80px 0 24px;
+}
+
+/* ---------- filter ---------- */
+.filter{
+  display:flex;flex-direction:column;gap:24px;
+  padding:24px 0;
+  border-top:var(--stroke-w) solid var(--stroke);
+  border-bottom:var(--stroke-w) solid var(--stroke);
+}
+.filter__row{display:flex;gap:24px;align-items:center;width:100%}
+.filter__row--sliders{gap:16px}
+.filter__item{flex:1 1 0;min-width:0;display:flex;gap:16px;align-items:center}
+.filter__item--slider,.filter__item--sort{height:40px}
+.filter__item--sort{flex:0 0 auto}
+.filter__label{font-size:14px;letter-spacing:.28px;color:var(--alto-black);white-space:nowrap}
+.filter__count{
+  font-size:14px;letter-spacing:.28px;color:var(--alto-dark-grey);
+  display:flex;gap:4px;align-items:center;
+}
+.filter__count b{color:var(--alto-black);font-weight:700}
+
+/* pill selektor */
+.selector{
+  flex:1 1 0;min-width:0;
+  display:flex;gap:2px;padding:4px;border-radius:48px;background:var(--light-green);
+}
+.selector__btn{
+  flex:1 1 0;min-width:0;height:32px;padding:12px 16px;border-radius:34px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:transparent;
+  font-size:14px;letter-spacing:.28px;color:var(--alto-black);white-space:nowrap;
+  transition:background .2s,color .2s;
+}
+.selector__btn:hover{background:var(--tag-grey)}
+.selector__btn.is-active{background:var(--alto-olive);color:var(--alto-white)}
+
+/* dual range slider */
+.range{position:relative;flex:1;height:40px;min-width:120px}
+.range__track,.range__fill{
+  position:absolute;top:50%;transform:translateY(-50%);height:4px;border-radius:30px;
+}
+.range__track{left:0;right:0;background:#d2d7d0}
+.range__fill{background:var(--alto-olive)}
+.range__input{
+  position:absolute;inset:0;width:100%;height:100%;
+  -webkit-appearance:none;appearance:none;background:none;
+  pointer-events:none;margin:0;
+}
+.range__input::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--alto-dark-olive);border:1px solid var(--alto-white);
+  pointer-events:auto;cursor:grab;
+}
+.range__input::-moz-range-thumb{
+  width:12px;height:12px;border-radius:50%;
+  background:var(--alto-dark-olive);border:1px solid var(--alto-white);
+  pointer-events:auto;cursor:grab;
+}
+.filter__value{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:100%;padding:4px 16px;border-radius:38px;background:var(--light-green);
+  font-size:14px;letter-spacing:.28px;color:var(--alto-dark-olive);white-space:nowrap;
+}
+
+.sort{
+  position:relative;display:flex;align-items:center;
+  width:153px;height:100%;border-radius:44px;
+  background:var(--light-green);
+}
+.sort select{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:100%;padding:12px 32px 12px 16px;
+  background:none;border:0;font:inherit;
+  font-size:14px;letter-spacing:.28px;color:var(--alto-dark-olive);
+  cursor:pointer;
+}
+.sort__chevron{position:absolute;right:12px;width:16px;height:16px;pointer-events:none}
+
+/* ---------- listings ---------- */
+.listings{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gutter);
+}
+.listing{
+  background:var(--alto-white);
+  border:var(--stroke-w) solid var(--stroke);
+  border-radius:12px;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+/* fotka je odkaz na detail bytu na webe projektu — <a> je inline,
+   preto display:block, inak by neplatila výška ani overflow */
+.listing__photo{
+  display:block;
+  position:relative;height:400px;overflow:hidden;background:rgba(136,141,124,.04);
+}
+.listing__photo>img.listing__img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .6s var(--ease-soft);
+}
+.listing:hover .listing__img{transform:scale(1.03)}
+.listing__fade{
+  position:absolute;left:0;right:0;bottom:0;height:104px;opacity:.5;
+  background:linear-gradient(180deg,rgba(217,217,217,0),#000);
+}
+.listing__project{position:absolute;top:32px;right:32px}
+.listing__body{display:flex;flex-direction:column;gap:32px;padding:32px}
+.listing__row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.listing__id{font-size:18px;line-height:1.4;color:var(--alto-dark-grey)}
+.listing__tags{display:flex;gap:8px;flex-wrap:wrap}
+/* svetlý tag s ikonou (parametre bytu) — background-100, radius 4, výška 32 */
+.data-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  height:32px;padding:0 10px 0 8px;border-radius:4px;background:var(--light-green);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;
+  color:var(--alto-dark-olive);white-space:nowrap;
+}
+.data-tag img{width:16px;height:16px}
+.listing__divider{border-top:var(--stroke-w) solid var(--stroke)}
+.listing__price-row{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.listing__price-col{display:flex;flex-direction:column;gap:16px}
+.listing__price{
+  display:flex;align-items:baseline;gap:10px;
+  font-family:var(--font-serif);font-weight:300;color:var(--alto-dark-olive);
+}
+.listing__price b{font-size:40px;line-height:1;letter-spacing:-1.2px;font-weight:300}
+.listing__price span{font-size:16px;line-height:1;letter-spacing:-.48px}
+/* rezervované a prenajaté byty nemajú na weboch projektov zverejnenú cenu */
+.listing__price--ask b{font-size:24px;letter-spacing:-.72px;color:var(--alto-olive)}
+.listing__sqm{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:16px;letter-spacing:-.48px;color:var(--alto-dark-grey);
+}
+.listing__buttons{display:flex;gap:8px;align-items:center}
+.s4__loadmore{display:flex;justify-content:center;padding:40px 0}
+.s4__loadmore .btn.is-hidden{display:none}
+
+/* prázdny výsledok */
+.listings__empty{
+  grid-column:1/-1;text-align:center;padding:80px 24px;
+  color:var(--alto-dark-grey);font-size:16px;
+}
+.listings__empty h3{
+  font-family:var(--font-serif);font-weight:300;font-size:32px;
+  letter-spacing:-.96px;color:var(--alto-dark-olive);margin-bottom:12px;
+}
+
+/* ============================================================
+   SECTION 5 — AMENITIES (scroll-stack à la effectdigital.com)
+   Každý slide je sticky s vlastnou výškou; nasledujúci sa zdola
+   „vysunie" a prekryje predchádzajúci, ktorý sa zároveň mierne
+   scale-down + fade (efekt riadi JS observer).
+   ============================================================ */
+.s5{
+  background:var(--alto-white);
+  padding:16px;
+}
+.s5__slide{
+  position:sticky;top:16px;
+  height:740px;
+  border-radius:20px;overflow:hidden;
+  margin-bottom:16px;
+  transform-origin:center top;
+  transition:none;
+  will-change:transform,opacity,filter;
+}
+.s5__slide:last-child{margin-bottom:0}
+.s5__bg{position:absolute;inset:0}
+.s5__bg img{width:100%;height:100%;object-fit:cover}
+.s5__shade{position:absolute;inset:0;background:rgba(0,0,0,.3)}  /* Figma overlay 30 % */
+.s5__content{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:80px 40px;
+  color:var(--alto-white);
+}
+.s5__top{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:24px;
+}
+.s5__eyebrow{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:18px;line-height:1.4;color:var(--alto-white);
+}
+/* svetlý variant tagu (background-0-40, radius 24) */
+.s5__counter{
+  display:inline-flex;align-items:center;gap:8px;
+  height:32px;padding:0 16px;border-radius:24px;
+  background:rgba(255,255,255,.4);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;color:var(--alto-white);
+  white-space:nowrap;
+}
+.s5__bottom{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+}
+.s5__headline{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:88px;line-height:1.14;letter-spacing:-2.64px;
+  color:var(--alto-white);
+  flex:0 1 899px;
+}
+.s5__body{
+  width:322px;flex:0 0 auto;
+  font-family:var(--font-sans);font-weight:500;
+  font-size:16px;line-height:1.3;color:var(--alto-white);
+}
+
+/* ============================================================
+   SECTION 6 — LOKALITA (statická mapa s POI a preklikmi)
+   ============================================================ */
+.s6{
+  position:relative;
+  background:var(--light-green);
+  padding:40px var(--pad-x);
+}
+.s6__map{
+  position:relative;
+  /* Figma: sekcia 1440×800 s p-40 → mapa 1360×720 (pomer 1360:720).
+     Mapa vyplní celú šírku page containera (rovnako ako ostatné sekcie),
+     container-type + cqw jednotky držia POI/piny presne na mieste
+     pri každej šírke okna. */
+  aspect-ratio:1360 / 720;
+  width:100%;
+  container-type:inline-size;
+  border-radius:16px;overflow:hidden;
+  background:var(--light-green);
+}
+/* stage = plátno s pomerom 1360×720; všetky cqw pozície vnútri sa počítajú
+   voči nemu, takže sa dá na mobile zväčšiť a posunúť bez rozsypania POI */
+.s6__map-stage{position:absolute;inset:0;container-type:inline-size}
+.s6__map-img{position:absolute;inset:0;overflow:hidden}
+/* Raster mapy nie je "cover" — Figma ho kladie na presnú pozíciu a mierku
+   (image 1419×768 @ left −11, vnútri obrázok 157.22 % výšky @ top −30.73 %).
+   Len takto sedia ulice pod POI ikonami. Všetko v cqw = figmaPx / 1360 × 100. */
+.s6__map-img img{
+  position:absolute;
+  left:-0.809cqw;      /* −11 / 1360 */
+  top:-17.353cqw;      /* −236.01 / 1360 */
+  width:104.338cqw;    /* 1419 / 1360 */
+  height:88.783cqw;    /* 1207.45 / 1360 */
+  max-width:none;object-fit:fill;
+}
+.s6__map-img::after{content:"";position:absolute;inset:0;background:rgba(136,141,124,.15)}
+
+/* Gradientové prekrytie okrajov — mapa sa „stráca" do pozadia sekcie.
+   1:1 podľa Figmy (29:561, Rectangle 7–10): štyri pruhy, každý je
+   eliptický radial-gradient z priehľadnej do #f3f2f2 = --light-green,
+   čo je presne farba pozadia .s6, takže prechod je neviditeľný.
+   Percentá vnútri gradientu sa počítajú voči vlastnej dlaždici
+   (background-size), preto sedia pri každej šírke okna.
+   Leží nad rastrom, ale pod trasami (z-index 1) a POI (z-index 2) —
+   rovnako ako v Figme, kde sú obdĺžniky pod ikonami. */
+.s6__map-fade{
+  position:absolute;inset:0;
+  pointer-events:none;
+  background:
+    /* dolný okraj — 96 px zo 720 */
+    radial-gradient(117.802% 100% at 50% 0%,
+      rgba(243,242,242,0) 0%, rgba(243,242,242,1) 100%) 0 100% / 100% 13.333% no-repeat,
+    /* pravý okraj — 384 px z 1360 */
+    radial-gradient(109.245% 128.696% at 2.083% 50%,
+      rgba(243,242,242,0) 0%, rgba(243,242,242,1) 100%) 100% 0 / 28.235% 100% no-repeat,
+    /* horný okraj — 203 px zo 720 */
+    radial-gradient(115.353% 97.916% at 50% 97.916%,
+      rgba(243,242,242,0) 0%, rgba(243,242,242,1) 100%) 0 0 / 100% 28.194% no-repeat,
+    /* ľavý okraj — 241 px z 1360 */
+    radial-gradient(109.245% 128.696% at 97.917% 50%,
+      rgba(243,242,242,0) 0%, rgba(243,242,242,1) 100%) 0 0 / 17.721% 100% no-repeat;
+}
+
+/* Prerušované trasy chôdze do centra */
+.s6-route{
+  position:absolute;z-index:1;
+  left:var(--x);top:var(--y);
+  width:var(--w);height:var(--h);
+  max-width:none;
+}
+
+/* Mapové SVG musia vyplniť svoj cqw box. Globálne img[src$=".svg"]{object-fit:none}
+   má vyššiu špecificitu než trieda, takže sa kreslili v intrinsickej veľkosti
+   a pri inej šírke okna "lietali" mimo pozície (najviditeľnejšie na trasách). */
+.s6-poi img,
+img.s6-project__pin,
+img.s6-route{object-fit:contain;object-position:center}
+
+/* Badge "15 min" — zelený, s ikonou chodca */
+.s6__walk{
+  position:absolute;z-index:2;
+  right:var(--r);top:var(--y);
+  height:24px;padding:4px 8px;border-radius:4px;
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--alto-olive);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;
+  color:var(--alto-white);white-space:nowrap;
+}
+.s6__walk img{width:12px;height:12px;object-fit:contain}
+
+/* Nadpis vľavo hore */
+.s6__headline{
+  position:absolute;top:72px;left:calc(var(--pad-x) + 32px);z-index:3;
+  font-family:var(--font-serif);font-weight:300;
+  font-size:56px;line-height:1;letter-spacing:-1.08px;
+  background:linear-gradient(-90deg,var(--alto-olive) 0%,var(--alto-black) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* Label oblasti (Historické centrum) — dvojriadkový, biele pozadie.
+   Pozicovaný sprava (--r) presne ako vo Figme (right:951px). */
+.s6__area-label{
+  position:absolute;z-index:2;
+  right:var(--r);top:var(--y);
+  height:48px;padding:12px;border-radius:4px;
+  display:flex;align-items:center;
+  background:var(--light-green);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;
+  color:var(--grey-500,#8a8585);text-align:center;white-space:nowrap;
+}
+
+/* POI ikony (park, tram, ihrisko, shopping, divadlo, MHD)
+   Design: 24px kruh, 12px glyf. Všetky rozmery aj pozície v cqw
+   (= % šírky mapy) — mapa má fixný aspect-ratio, takže cqw funguje
+   pre X aj Y a nič sa nikdy nerozíde.
+   --x/--y = ĽAVÝ HORNÝ ROH presne podľa Figmy (žiadne centrovanie). */
+.s6-poi{
+  position:absolute;z-index:2;
+  left:var(--x);top:var(--y);
+  width:1.765cqw;height:1.765cqw;      /* 24/1360 */
+  min-width:18px;min-height:18px;      /* čitateľnosť na malých viewportoch */
+  border-radius:9999px;
+  background:#cbcfc4;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.s6-poi img{width:.882cqw;height:.882cqw;min-width:9px;min-height:9px}  /* 12/1360 */
+/* zelené POI (park/ihrisko pri projektoch) majú biele glyfy */
+.s6-poi--green{background:var(--alto-olive)}
+
+/* Projekt = anchor wrapper obsahuje pin (label) aj dot (bod) ako
+   samostatné absolútne pozície (nie jedno pod/nad druhým). */
+.s6-project{
+  position:absolute;inset:0;z-index:4;
+  display:block;pointer-events:none;
+}
+.s6-project__pin,
+.s6-project__dot{pointer-events:auto}
+
+/* Pin (label FLORIAN / SKY PARK) — rozmery aj pozícia v cqw, ľavý horný roh */
+.s6-project__pin{
+  position:absolute;
+  left:var(--x);top:var(--y);
+  display:block;
+  max-width:none;  /* prebije globálne img{max-width:100%} */
+  transition:transform .25s var(--ease-soft);
+}
+.s6-project--florian .s6-project__pin{width:4.779cqw;height:2.39cqw}   /* 65 × 32.5 /1360 */
+.s6-project--skypark .s6-project__pin{width:4.191cqw;height:2.426cqw}  /* 57 × 33 /1360 */
+.s6-project:hover .s6-project__pin{transform:translateY(-3px)}
+
+/* Bod (dot) — 16px kruh, ľavý horný roh podľa Figmy */
+.s6-project__dot{
+  position:absolute;
+  left:var(--x);top:var(--y);
+  width:1.176cqw;height:1.176cqw;      /* 16/1360 */
+  min-width:12px;min-height:12px;
+  border-radius:50%;
+  background:var(--alto-dark-olive);
+}
+.s6-project__dot::before{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:var(--alto-dark-olive);
+  animation:s6pulse 2.4s var(--ease-soft) infinite;
+}
+.s6-project--skypark .s6-project__dot::before{animation-delay:1.2s}
+@keyframes s6pulse{
+  0%{transform:scale(1);opacity:.55}
+  70%{transform:scale(3.2);opacity:0}
+  100%{transform:scale(3.2);opacity:0}
+}
+
+/* Preklikové karty vpravo hore — width 220, glass olive, radius 14 */
+/* Karty sú fixné (253×96 ako vo Figme) — nescalujú sa so šírkou okna,
+   takže náhľady projektov si vždy držia pomer strán 122:80. */
+.s6-cards{
+  position:absolute;top:72px;right:calc(var(--pad-x) + 32px);z-index:5;
+  display:flex;flex-direction:column;gap:4px;
+  width:253px;
+}
+.s6-card{
+  display:flex;align-items:center;justify-content:flex-end;
+  height:96px;padding:8px;border-radius:14px;
+  background:rgba(136,141,124,.2);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:background .25s;
+}
+.s6-card:hover{background:rgba(136,141,124,.32)}
+/* Figma: náhľad 122×80, textový stĺpec dopĺňa zvyšok karty */
+.s6-card__thumb{
+  flex:0 0 122px;height:80px;aspect-ratio:122 / 80;
+  border-radius:8px;overflow:hidden;background:var(--tag-grey);
+}
+.s6-card__thumb img{width:100%;height:100%;object-fit:cover}
+.s6-card:first-child .s6-card__thumb img{object-position:center 43%}
+.s6-card:last-child  .s6-card__thumb img{object-position:left 60%}
+.s6-card__body{
+  flex:1 1 auto;min-width:0;height:80px;
+  display:flex;flex-direction:column;justify-content:center;gap:6px;
+  padding:4px 14px;
+}
+.s6-card__title{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:16px;line-height:1.4;color:var(--alto-black);
+}
+.s6-card__desc{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.4;letter-spacing:.28px;
+  color:var(--brand-black-40);
+}
+.s6-card__nav{
+  align-self:flex-start;
+  display:inline-flex;align-items:center;height:24px;padding:0 12px;
+  border-radius:90px;background:var(--alto-white);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1;letter-spacing:.28px;
+  color:var(--alto-olive);
+  transition:background .25s;
+}
+.s6-card:hover .s6-card__nav{background:var(--light-green)}
+/* Responzívne správanie sekcie Lokalita rieši kompaktný (≤1024) a
+   tabletový (768–1024) blok nižšie — samostatný blok tu už netreba. */
+
+/* ============================================================
+   SECTION 7 — GALÉRIA (v02)
+   ============================================================ */
+/* 06 Section_Gallery — 1:1 podľa Figmy (29:1894)
+   bg background-100, p-40, gap-80, horné rohy 20px, bez šípok */
+.gal{
+  background:var(--light-green);
+  padding:80px 0 80px var(--pad-x);
+  border-radius:20px 20px 0 0;
+  overflow:hidden;
+  display:flex;flex-direction:column;gap:80px;
+}
+.gal__head{
+  /* fill + rozloženie do strán: nadpis vľavo, šípky so selektorom vpravo */
+  display:flex;align-items:flex-start;justify-content:space-between;gap:24px;
+  /* .gal má pravý padding 0, aby slider mohol vytiecť k okraju obrazovky —
+     hlavičku preto musíme v kontajneri udržať sami. var(--pad-x) sa tu
+     použiť nedá: jeho 100 % by sa počítalo zo šírky hlavičky, nie stránky,
+     a pri širokom okne by odsadenie vyšlo o polovicu menšie (na 1920 px
+     by hlavička končila na 1840 namiesto 1760). */
+  width:min(var(--content-max), 100% - var(--page-pad));
+  padding:0;
+}
+/* Headline je H3 (32/40, tracking −0.96) — nadpis sekcie je dvojriadkový */
+.gal__headline{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:32px;line-height:1.25;letter-spacing:-.96px;
+}
+/* vpravo hore: šípky slidera + selektor projektu (Figma 29:1896, medzera 10 px) */
+/* Šípky sú predvolene skryté a zapínajú sa až nad kompaktným breakpointom.
+   Opačné poradie (zobraziť a potom skrývať) je krehké — keby sa kompaktné
+   pravidlo neuplatnilo, šípky by sa objavili vedľa selektora roztiahnutého
+   na 100 % a skupina by pretiekla za kontajner. */
+.gal__tools{display:flex;align-items:center;gap:10px}
+.gal__tools .carousel-controls{display:none}
+@media (min-width:1025px){
+  .gal__tools .carousel-controls{display:flex}
+}
+
+/* selektor projektu — biely pill 321px, aktívny má background-100 podklad */
+.gal__selector{
+  flex:0 0 321px;
+  display:flex;gap:2px;padding:4px;border-radius:48px;
+  background:var(--alto-white);
+}
+.gal__btn{
+  flex:1 1 0;min-width:0;height:32px;padding:12px 16px;border-radius:34px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:transparent;
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;
+  color:var(--alto-dark-grey);white-space:nowrap;
+  transition:background .2s,color .2s;
+}
+.gal__btn:hover{color:var(--alto-dark-olive)}
+.gal__btn.is-active{background:var(--light-green);color:var(--alto-dark-olive)}
+
+/* slider — 10 fotiek 437×480, gap 8, bez šípok, drag-scroll */
+.gal__track{
+  display:flex;gap:8px;align-items:center;
+  overflow-x:auto;scroll-snap-type:x proximity;scroll-behavior:smooth;
+  scrollbar-width:none;
+  cursor:grab;user-select:none;
+  padding-right:var(--pad-x);
+}
+.gal__track img,.steps__track img{-webkit-user-drag:none;user-drag:none}
+.gal__track.is-dragging{cursor:grabbing;scroll-behavior:auto;scroll-snap-type:none}
+.gal__track::-webkit-scrollbar{display:none}
+.gal__card{
+  position:relative;
+  flex:0 0 437px;height:480px;
+  border-radius:12px;overflow:hidden;scroll-snap-align:start;
+  background:var(--stone);
+  transition:opacity .3s var(--ease-soft),transform .3s var(--ease-soft),flex-basis .3s var(--ease-soft),margin-left .3s var(--ease-soft);
+}
+.gal__card img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease-soft);pointer-events:none}
+.gal__card:hover img{transform:scale(1.03)}
+.gal__card.is-hidden{
+  flex-basis:0;min-width:0;
+  opacity:0;transform:scale(.9);
+  pointer-events:none;
+  margin-left:-8px;
+}
+/* tag projektu — rovnaký komponent ako .chip--dark, bottom 20 / left 20 */
+.gal__tag{
+  position:absolute;bottom:20px;left:20px;z-index:1;
+  display:inline-flex;align-items:center;gap:8px;
+  height:32px;padding:0 16px;border-radius:4px;
+  background:var(--brand-black-40);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;
+  color:var(--alto-white);white-space:nowrap;
+}
+
+/* spoločné ovládače karuselov */
+.carousel-controls{display:flex;gap:4px;align-items:center}
+.carousel-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:8px;
+  transition:background .25s,transform .15s;
+}
+.carousel-btn:active{transform:scale(.94)}
+.carousel-btn--dark{
+  background:var(--alto-olive);color:var(--alto-white);border-radius:36px;
+}
+.carousel-btn--dark:hover{background:#7d8271}
+/* svetlý variant — šípky galérie na sivom podklade (Figma 29:1896) */
+.carousel-btn--light{
+  background:var(--alto-white);color:var(--alto-black);border-radius:36px;
+}
+.carousel-btn--light:hover{background:var(--light-green)}
+
+/* ============================================================
+   SECTION 8 — AKO PREBIEHA PRENÁJOM (v02)
+   ============================================================ */
+.steps{
+  background:var(--alto-dark-olive);min-height:720px;
+  padding:40px 0 80px;
+  display:flex;flex-direction:column;gap:120px;   /* Figma gap-[120px] */
+}
+.steps__head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  padding:0 var(--pad-x);
+}
+.steps__intro{flex:0 0 437px;min-width:0;display:flex;flex-direction:column;gap:24px;padding-bottom:24px}
+.steps__headline{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:56px;line-height:1;letter-spacing:-1.08px;
+}
+.steps__intro p{font-size:16px;line-height:1.3;color:var(--alto-white)}
+.steps__track{
+  display:flex;gap:24px;
+  padding:0 var(--pad-x);
+  overflow-x:auto;scroll-snap-type:x proximity;scroll-behavior:smooth;
+  scroll-padding-inline:var(--pad-x);   /* aby snap nepohltil padding tracku */
+  scrollbar-width:none;
+  cursor:grab;user-select:none;
+}
+.steps__track.is-dragging{cursor:grabbing;scroll-behavior:auto;scroll-snap-type:none}
+.steps__track::-webkit-scrollbar{display:none}
+.steps__card{
+  flex:0 0 min(437.333px,82vw);height:256px;
+  background:var(--alto-olive);border-radius:12px;
+  padding:24px;scroll-snap-align:start;
+  display:flex;flex-direction:column;justify-content:space-between;gap:24px;
+}
+.steps__upper{display:flex;gap:24px;align-items:center}
+.steps__num{
+  flex:0 0 auto;width:56px;height:56px;border-radius:4px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--alto-dark-olive);
+  font-family:var(--font-serif);font-weight:300;
+  font-size:32px;letter-spacing:-1.08px;color:var(--alto-white);
+}
+.steps__upper h3{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:24px;line-height:1.3;color:var(--alto-white);
+}
+.steps__card>p{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:18px;line-height:1.4;color:var(--alto-white);
+}
+
+/* ============================================================
+   SECTION 10 — KONTAKT (v02)
+   ============================================================ */
+.contact{
+  display:flex;gap:24px;align-items:stretch;justify-content:space-between;
+  background:var(--alto-white);
+  padding:40px var(--pad-x);
+}
+.contact__left{
+  flex:1 1 0;min-width:0;max-width:552px;
+  display:flex;flex-direction:column;justify-content:space-between;gap:48px;
+  padding:0 88px 0 0;
+}
+.contact__text{display:flex;flex-direction:column;gap:40px;max-width:464px}
+.contact__headline{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:56px;line-height:1;letter-spacing:-1.08px;
+}
+.contact__lede{font-size:16px;line-height:1.4;color:var(--alto-light-grey);max-width:322px}
+
+.contact__details{display:flex;flex-direction:column;gap:40px}
+.contact__block,.contact__address{
+  display:flex;flex-direction:column;
+  font-size:16px;line-height:1.4;font-family:var(--font-sans);font-weight:500;
+  font-style:normal;
+}
+.contact__label{color:var(--alto-black)}
+.contact__block a{color:var(--alto-olive);text-decoration:underline;text-decoration-thickness:from-font;text-underline-offset:2px}
+.contact__block a:hover{opacity:.75}
+.contact__address p:first-child{color:var(--alto-light-grey)}
+.contact__address p:not(:first-child){color:var(--alto-dark-grey)}
+
+.contact__logo{width:91px;height:47px}
+
+.contact__form{
+  flex:0 1 553px;min-width:0;
+  display:flex;flex-direction:column;gap:32px;
+  background:var(--light-green);border-radius:12px;padding:24px;
+}
+.contact__row{display:flex;gap:16px}
+.contact__row .field{flex:1 1 0;min-width:0}
+.field{display:flex;flex-direction:column;gap:1px;position:relative}
+.field label{font-size:16px;line-height:1.4;color:var(--alto-olive)}
+.field input,.field select,.field textarea{
+  width:100%;height:48px;padding:12px 0;
+  font:inherit;font-size:16px;line-height:1.4;color:var(--alto-light-grey);
+  background:transparent;border:0;border-bottom:1px solid var(--tag-grey);
+  border-radius:0;
+  transition:border-color .25s,color .25s;
+}
+.field textarea{height:128px;resize:vertical}
+.field input::placeholder,.field textarea::placeholder{color:var(--brand-black-40)}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-bottom-color:var(--alto-dark-olive);
+}
+
+/* negatívny stav — pri submite alebo blur po dotknutí neplatného poľa */
+.field.is-invalid label{color:var(--destructive,#c0392b)}
+.field.is-invalid input,
+.field.is-invalid select,
+.field.is-invalid textarea{border-bottom-color:var(--destructive,#c0392b)}
+.field__error{
+  display:none;
+  font-family:var(--font-sans);font-weight:500;
+  font-size:12px;line-height:1.4;letter-spacing:.28px;
+  color:var(--destructive,#c0392b);
+  margin-top:4px;
+}
+.field.is-invalid .field__error{display:block}
+.field--select select{
+  -webkit-appearance:none;appearance:none;cursor:pointer;padding-right:32px;
+}
+.field--select select:invalid{color:var(--brand-black-40)}
+.field__chevron{
+  position:absolute;right:0;bottom:12px;width:24px;height:24px;pointer-events:none;
+}
+
+/* štítok vybraného bytu nad správou (Figma 88:1234) */
+.inquiry-tag{
+  align-self:flex-start;
+  display:inline-flex;align-items:center;gap:8px;
+  margin:8px 0 4px;
+  padding:8px 10px 8px 8px;border-radius:4px;
+  background:var(--alto-white);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.inquiry-tag[hidden]{display:none}
+.inquiry-tag__label{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;
+  color:var(--alto-dark-olive);white-space:nowrap;
+}
+.inquiry-tag__clear{
+  order:-1;flex:0 0 16px;
+  width:16px;height:16px;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:opacity .2s;
+}
+.inquiry-tag__clear:hover{opacity:.6}
+.inquiry-tag__clear img{width:10px;height:10px;object-fit:contain}
+
+/* pill selektor projekt (SKYPARK / FLORIAN) — biele pozadie na formulárovej vrstve */
+.pill-selector{
+  display:flex;gap:2px;padding:4px;border-radius:48px;background:var(--alto-white);
+  margin-top:8px;
+}
+.pill-selector__btn{
+  flex:1 1 0;min-width:0;height:32px;padding:12px 16px;border-radius:34px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:transparent;
+  font-family:var(--font-sans);font-size:14px;font-weight:500;letter-spacing:.28px;
+  color:var(--alto-dark-grey);white-space:nowrap;
+  transition:background .2s,color .2s;
+}
+.pill-selector__btn:hover{color:var(--alto-black)}
+.pill-selector__btn.is-active{background:var(--alto-olive);color:var(--alto-white)}
+
+.contact__submit-row{
+  display:flex;gap:32px;align-items:center;width:100%;
+}
+.contact__consent{
+  flex:1 1 0;min-width:0;
+  display:flex;gap:16px;align-items:center;cursor:pointer;user-select:none;
+}
+.contact__consent input{position:absolute;opacity:0;pointer-events:none}
+.checkbox{
+  flex:0 0 auto;width:24px;height:24px;border-radius:4px;
+  background:var(--alto-white);
+  display:inline-flex;align-items:center;justify-content:center;
+}
+/* checkmark je stále v olivovej farbe — pozadie ostáva biele */
+.checkbox img{opacity:0;transition:opacity .2s}
+.contact__consent input:checked + .checkbox img{opacity:1}
+.contact__consent input:focus-visible + .checkbox{outline:2px solid var(--alto-dark-olive);outline-offset:2px}
+.contact__consent-text{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.4;letter-spacing:.28px;color:var(--alto-dark-grey);
+}
+.contact__submit-row .btn{flex:0 0 auto}
+.contact__success{font-size:14px;color:var(--alto-dark-olive)}
+.contact__error{font-size:14px;color:#a4453a}
+
+/* Antispam honeypot — pole musí ostať v DOM a odosielateľné, len ho
+   nesmie vidieť človek. display:none by ho niektoré boty odhalili,
+   preto ho odsúvame mimo plátna. aria-hidden drží preč čítačky. */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+/* ============================================================
+   11 FOOTER
+   ============================================================ */
+.footer{
+  background:var(--alto-black);color:var(--light-green);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  padding:40px var(--pad-x);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.4;letter-spacing:.28px;
+}
+.footer__links{display:flex;gap:24px}
+.footer a:hover{opacity:.7}
+
+/* ============================================================
+   COOKIE LIŠTA + SPRÁVA SÚHLASU
+   Kompaktná, približne štvorcová karta v pravom dolnom rohu.
+   ============================================================ */
+.consent{
+  position:fixed;right:40px;bottom:40px;z-index:120;
+  width:340px;max-width:calc(100vw - 32px);
+}
+.consent[hidden]{display:none}
+.consent__card{
+  display:flex;flex-direction:column;gap:20px;
+  min-height:320px;                 /* zhruba štvorec (340×320) */
+  padding:24px;border-radius:20px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:var(--stroke-w) solid var(--stroke);
+  /* vjazd zdola s jemným priblížením */
+  opacity:0;transform:translateY(16px) scale(.98);
+  transform-origin:100% 100%;
+  transition:opacity .3s ease,transform .35s var(--ease-soft);
+}
+.consent.is-open .consent__card{opacity:1;transform:none}
+
+.consent__head{display:flex;align-items:center;gap:10px}
+.consent__head img{width:20px;height:20px;object-fit:contain}
+.consent__title{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:24px;line-height:1;letter-spacing:-.72px;color:var(--alto-black);
+}
+.consent__text{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.4;color:var(--alto-light-grey);
+}
+.consent__text a{color:var(--alto-dark-olive);text-decoration:underline;text-underline-offset:3px}
+.consent__text a:hover{color:var(--alto-olive)}
+
+.consent__actions{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.consent__actions .btn{width:100%;justify-content:center}
+.consent__row{display:flex;gap:8px}
+.consent__row .btn{flex:1 1 0;min-width:0;padding:10px 12px}
+
+/* prepínače kategórií — viditeľné až v stave "settings" */
+.consent__list{display:none;flex-direction:column;gap:4px}
+.consent__card[data-view="settings"] .consent__list{display:flex}
+.consent__card[data-view="settings"] .consent__text{display:none}
+.consent__switch{
+  position:relative;
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px;border-radius:8px;background:var(--light-green);
+  cursor:pointer;
+}
+.consent__switch--locked{cursor:default;opacity:.75}
+.consent__switch input{position:absolute;opacity:0;pointer-events:none}
+.consent__switch-text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.consent__switch-name{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;color:var(--alto-black);
+}
+.consent__switch-desc{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:12px;line-height:1.3;color:var(--alto-dark-grey);
+}
+.consent__track{
+  flex:0 0 auto;position:relative;width:36px;height:20px;border-radius:10px;
+  background:var(--tag-grey);transition:background .25s var(--ease-soft);
+}
+.consent__track::after{
+  content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;
+  background:var(--alto-white);
+  transition:transform .25s var(--ease-soft);
+}
+.consent__switch input:checked + .consent__track{background:var(--alto-dark-olive)}
+.consent__switch input:checked + .consent__track::after{transform:translateX(16px)}
+.consent__switch input:focus-visible + .consent__track{outline:2px solid var(--alto-dark-olive);outline-offset:2px}
+
+/* v stave "settings" je hlavnou akciou uloženie volieb;
+   "Odmietnuť" ostáva rovnako dostupné ako pri prvom kroku */
+.consent__save{display:none}
+.consent__card[data-view="settings"] .consent__save{display:inline-flex}
+.consent__card[data-view="settings"] .consent__accept,
+.consent__card[data-view="settings"] .consent__settings-btn{display:none}
+
+@media(max-width:767px){
+  /* na mobile je karta na celú šírku, takže sa nedrží štvorca a hugne obsah */
+  .consent{right:16px;left:16px;bottom:16px;width:auto}
+  .consent__card{padding:20px;gap:16px;border-radius:16px;min-height:0}
+}
+
+/* ============================================================
+   404 — STRÁNKA SA NENAŠLA (Figma 81:7634)
+   Zdieľa hlavičku/pätičku so stránkou, obsah centrovaný.
+   ============================================================ */
+/* na error stránke hlavička nemá pod čo podsúvať obsah — bez skla */
+.page-error .header{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+.errpage{
+  background:var(--light-green);
+  min-height:calc(100svh - 96px);       /* pod sticky hlavičkou */
+  display:flex;align-items:center;justify-content:center;
+  padding:80px var(--pad-x) 120px;
+  text-align:center;
+}
+.errpage__inner{
+  display:flex;flex-direction:column;align-items:center;gap:24px;
+  max-width:820px;
+}
+.errpage__code{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:clamp(96px,13vw,176px);line-height:1;letter-spacing:-2px;
+  color:#d8d5ce;                         /* jemná svetlá šedá */
+}
+/* veľkosť tak, aby prvý riadok (po <br>) ostal na jednom riadku ako v dizajne */
+.errpage__title{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:clamp(30px,3.4vw,44px);line-height:1.18;letter-spacing:-.9px;
+}
+.errpage__btn{margin-top:16px}
+@media(max-width:767px){
+  .errpage{min-height:calc(100svh - 80px);padding:48px var(--page-pad) 80px}
+  .errpage__code{font-size:clamp(80px,26vw,120px)}
+  .errpage__title br{display:none}
+}
+
+/* ============================================================
+   PRÁVNE PODSTRÁNKY (zásady spracúvania údajov, cookies)
+   Rovnaká typografická škála ako homepage, len jednostĺpcový
+   čitateľský stĺpec 800px.
+   ============================================================ */
+.page-legal{background:var(--light-green)}
+/* bez hero sekcie sa hlavička nemá pod čo podsúvať a potrebuje vlastný
+   podklad, inak by pod ňou prebiehal text */
+.page-legal .header{
+  margin-bottom:0;padding:24px var(--pad-x);
+  background:rgba(243,242,242,.85);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.page-legal .header__logo-img{filter:brightness(0) saturate(0) invert(12%)}
+
+.legal{
+  background:var(--light-green);
+  padding:64px var(--pad-x) 96px;
+}
+.legal__inner{max-width:800px}
+.legal__back{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.2;letter-spacing:.28px;
+  color:var(--alto-dark-grey);
+  transition:color .2s;
+}
+.legal__back:hover{color:var(--alto-dark-olive)}
+/* ikona je 32×32 kruh so šípkou — otočením o 135° smeruje späť doľava;
+   object-fit:contain prebíja globálne pravidlo pre SVG (inak by sa orezala) */
+img.legal__back-icon{width:20px;height:20px;object-fit:contain;transform:rotate(-135deg)}
+.legal__title{
+  margin-top:24px;
+  font-family:var(--font-serif);font-weight:300;
+  font-size:56px;line-height:1;letter-spacing:-1.08px;
+}
+.legal__lede{
+  margin-top:24px;max-width:640px;
+  font-family:var(--font-sans);font-weight:500;
+  font-size:18px;line-height:1.4;color:var(--alto-olive);
+}
+.legal__meta{
+  margin-top:40px;padding-top:24px;
+  border-top:var(--stroke-w) solid var(--stroke);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.4;letter-spacing:.28px;color:var(--alto-dark-grey);
+}
+/* upozornenie, že záväzné je slovenské znenie — len v EN režime */
+.legal__note{
+  margin-top:24px;padding:16px 20px;border-radius:8px;
+  background:var(--tag-grey);
+  font-family:var(--font-sans);font-weight:500;
+  font-size:14px;line-height:1.4;letter-spacing:.28px;color:var(--alto-light-grey);
+}
+html[lang="sk"] .legal__note{display:none}
+
+.legal__body{margin-top:56px;display:flex;flex-direction:column;gap:48px}
+.legal__section{display:flex;flex-direction:column;gap:16px}
+.legal__section h2{
+  font-family:var(--font-serif);font-weight:300;
+  font-size:32px;line-height:1.25;letter-spacing:-.96px;
+  color:var(--alto-black);
+}
+.legal__section p,
+.legal__section li{
+  font-family:var(--font-sans);font-weight:500;
+  font-size:16px;line-height:1.5;color:var(--alto-light-grey);
+}
+.legal__section a{color:var(--alto-dark-olive);text-decoration:underline;text-underline-offset:3px}
+.legal__section a:hover{color:var(--alto-olive)}
+.legal__section strong{color:var(--alto-black)}
+.legal__section ul{display:flex;flex-direction:column;gap:12px;padding-left:0}
+.legal__section li{position:relative;padding-left:24px}
+.legal__section li::before{
+  content:"";position:absolute;left:4px;top:.65em;
+  width:6px;height:6px;border-radius:50%;background:var(--alto-olive);
+}
+/* vnorený zoznam (cookies tretích strán) */
+.legal__section li ul{margin-top:12px}
+
+@media(max-width:767px){
+  .page-legal .header{padding:20px var(--page-pad)}
+  .legal{padding:32px var(--page-pad) 64px}
+  .legal__title{font-size:40px;line-height:1.15;letter-spacing:-1.2px}
+  .legal__lede{font-size:16px}
+  .legal__body{margin-top:40px;gap:40px}
+  .legal__section h2{font-size:24px;letter-spacing:-.72px}
+}
+
+/* ============================================================
+   DOTIAHY PÍSMEN PRI background-clip:text
+
+   FK Roman Standard má ascent + descent = 1.28em. Pri line-height:1
+   je preto polovičný proklad záporný (−0.14em) a účiara sadá až na
+   0.82em — dotiahy (g, y, j, ý, Ç) potom siahajú do 1.034em, teda
+   ~3,4 % font-size POD spodný okraj boxu. Lenže background-clip:text
+   vykresľuje gradient len v rámci boxu, takže sa spodky týchto písmen
+   jednoducho nenamaľujú a vyzerá to ako orezané.
+
+   Riešenie: box zdola predĺžime o 0.06em (takmer dvojnásobná rezerva)
+   a rovnako veľkým záporným marginom zrušíme dopad na rozloženie —
+   všetky tieto prvky majú margin-bottom 0 a rozostupy im dáva gap
+   rodiča, takže sa nič neposunie. Gradienty sú vodorovné, takže
+   predĺženie nadol nemení priebeh farby.
+
+   Týka sa len prvkov, ktoré kombinujú background-clip:text
+   s line-height:1. Nadpisy s voľnejším riadkovaním (.gal__headline,
+   .s4__headline) miesto majú a v zozname nie sú.
+   ============================================================ */
+.s3__headline,
+.s6__headline,
+.steps__headline,
+.contact__headline,
+.legal__title,
+.s2__item{
+  padding-bottom:.06em;
+  margin-bottom:-.06em;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* ============================================================
+   KOMPAKTNÝ LAYOUT — tablet aj mobil (≤1024px)
+   Desktop nav sa zmestí do ~1024px, preto sa až pod ním prepína
+   na burger + jednostĺpcový layout. Breakpoint musí sedieť s
+   isMobile() a auto-close menu v js/main.js.
+   Sekciovo-špecifické rozmery sú ladené na mobilný artboard 393px;
+   tabletové doladenie (2 stĺpce, landscape mapa) je v bloku nižšie.
+   ============================================================ */
+@media(max-width:1024px){
+  :root{--page-pad:24px;--gutter:16px}
+
+  /* ---------- header ---------- */
+  .header{
+    height:80px;margin-bottom:-80px;
+    padding:20px 24px 12px;gap:12px;
+  }
+  .header.is-compact{padding:12px 24px 20px}
+  .header__logo{height:32px}
+  .header__logo-img{height:22px}
+  /* celá desktop navigácia sa skryje, ovládanie preberá burger + fullscreen menu */
+  .nav__link,.nav__lang,.nav__projects,.nav__dropdown{display:none}
+  /* obal zbaľovacej skupiny tu netreba — bez neho by ostal prázdny gap */
+  .nav__items{display:none}
+  /* navpill: 4px padding zo všetkých strán + 40px prvky = 48px celková výška */
+  .nav{align-self:center;padding:4px;border-radius:24px;transition:opacity .25s ease}
+  .nav__row{height:40px;padding:0;gap:4px;border-radius:20px}
+  .nav__cta{height:40px;padding:0 16px;font-size:14px;letter-spacing:.28px}
+  .nav__burger{display:inline-flex}
+  body.is-menu-open .nav{opacity:0;pointer-events:none}
+
+  /* ---------- hero ---------- */
+  .hero-frame{padding:8px}
+  /* pevná výška, aby sa dal obsah pripnúť na spodok kontajnera */
+  .hero{height:calc(100svh - 16px);min-height:640px;border-radius:20px}
+  .hero__inner{flex-direction:column;align-items:stretch;gap:24px;padding:104px 24px 24px;justify-content:flex-end}
+  .hero__left,.hero__right{flex:0 0 auto;height:auto}
+  /* na mobile necháme text zalomiť prirodzene, nie desktopovými <br> */
+  .hero__headline{font-size:32px;line-height:1.15;letter-spacing:-.62px}
+  .hero__headline br,.s4__headline br,.contact__headline br,
+  .s3__headline br,.gal__headline br{display:none}
+  .hero__buttons{flex-direction:column;gap:8px;width:100%}
+  .hero__buttons .btn{width:100%;height:48px;justify-content:center}
+  .hero__right{justify-content:center}
+  .hero__scroll{align-self:center}
+
+  /* ---------- 02 karty projektov ---------- */
+  .s02{flex-direction:column;gap:16px;padding:24px}
+  .project-card{flex:0 0 auto;height:auto;min-height:0}
+  .project-card__media{flex:0 0 auto;height:auto;min-height:0;aspect-ratio:337 / 273}
+  .project-card__body{flex:0 0 auto;min-height:0;height:auto;padding:24px;gap:20px}
+  .project-card__detail-inner{gap:20px}
+  .project-card__name{font-size:32px;letter-spacing:-.96px}
+  .project-card__desc{font-size:14px}
+  .project-card__location{font-size:16px;align-items:flex-start}
+  /* tlačidlá pod sebou na celú šírku */
+  .project-card__actions{flex-direction:column;align-items:stretch;gap:8px}
+  .project-card__actions .btn{width:100%;justify-content:center}
+
+  /* ---------- 03 typy bytov = akordeón ---------- */
+  .s2{
+    height:auto;min-height:0;display:block;
+    padding:48px var(--page-pad) 48px;
+  }
+  .s2__col--left,.s2__col--right{display:none}
+  .s2__col--center{display:block;width:100%}
+  .s2__col{height:auto}
+  .s2__eyebrow{margin-bottom:48px}
+  .s2__list{display:block;padding:0}
+  .s2__row+.s2__row{margin-top:24px}
+  .s2__item{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    width:100%;min-height:48px;text-align:left;
+    font-size:32px;line-height:1.25;letter-spacing:-.96px;
+    opacity:1;color:var(--alto-dark-grey);
+    /* tu je riadkovanie 1.25, takže sa dotiahy zmestia a kompenzácia
+       z desktopu nie je potrebná — v centrovanom flex riadku by len
+       posúvala obsah o pixel hore */
+    padding-bottom:0;margin-bottom:0;
+  }
+  .s2__item .s2__label{flex:1 1 auto;min-width:0}
+  .s2__item.is-active{
+    background:linear-gradient(to left,var(--alto-olive),var(--alto-black));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  /* + tlačidlo (48px kruh s obrysom) */
+  .s2__plus{
+    display:inline-flex;align-items:center;justify-content:center;
+    flex:0 0 48px;width:48px;height:48px;border-radius:50%;
+    border:.5px solid var(--stroke);position:relative;
+  }
+  .s2__plus::before,.s2__plus::after{
+    content:"";position:absolute;background:var(--alto-dark-olive);
+    transition:transform .3s var(--ease-soft),opacity .3s ease;
+  }
+  .s2__plus::before{width:14px;height:1px}
+  .s2__plus::after{width:1px;height:14px}
+  .s2__item[aria-expanded="true"] .s2__plus::after{transform:scaleY(0);opacity:0}
+  /* panel s jednou fotkou — rozbalenie cez grid-template-rows 0fr→1fr.
+     Stav riadi len trieda .is-open (JS iba prepína triedu), takže sa
+     nemôže dostať do nekonzistentného stavu ako pri JS animácii výšky. */
+  .s2__panel{
+    display:grid;grid-template-rows:0fr;
+    overflow:hidden;opacity:0;margin-top:0;
+    transition:grid-template-rows .45s var(--ease-soft),opacity .3s ease,margin-top .45s var(--ease-soft);
+  }
+  .s2__panel.is-open{grid-template-rows:1fr;opacity:1;margin-top:24px}
+  .s2__panel img{min-height:0;width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px}
+
+  /* ---------- 04 benefity (bento → jeden stĺpec) ----------
+     Poradie podľa mobilného dizajnu: intro → foto ALTO → dve malé
+     karty → tmavá karta → foto → biela karta. */
+  .s3{padding:40px var(--page-pad)}
+  .s3__grid{display:flex;flex-direction:column;gap:16px;height:auto}
+  .s3-card--intro{order:-1;flex:0 0 auto;gap:40px;padding:24px}
+  /* v úzkej karte sa pôvodný gradient stráca v olivovom podklade —
+     posúvame svetlý koniec vyššie, aby nadpis ostal čitateľný */
+  .s3-card--intro .s3__headline{
+    max-width:none;
+    background:linear-gradient(-70.21deg,rgba(255,255,255,.62) 8%,var(--alto-white) 72%);
+    -webkit-background-clip:text;background-clip:text;
+  }
+  .s3__col,.s3__col--right{
+    display:flex;flex-direction:column;gap:16px;width:100%;flex:0 0 auto;
+  }
+  .s3__col--right{display:contents}                 /* rozpadne sa na jednotlivé karty */
+  .s3__col--right .s3-card--photo-sm{order:1}       /* foto pred bielou kartou */
+  .s3__col--right .s3-card--outline:not(.s3-card--photo-sm){order:2}
+  .s3__row{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .s3-card{flex:0 0 auto;padding:24px}
+  .s3-card--photo{height:auto;aspect-ratio:345 / 410}
+  .s3-card--photo-sm{height:auto;min-height:0;aspect-ratio:345 / 240}
+  .s3__row .s3-card{min-height:170px}
+  .s3-card--black:not(.s3__row .s3-card),
+  .s3-card--outline:not(.s3-card--photo-sm){min-height:140px}
+  .s3-card__text{max-width:none;font-size:16px}
+  .s3__headline{font-size:40px;line-height:1.15;letter-spacing:-1.2px}
+
+  /* ---------- 05 ponuka + filter ---------- */
+  .s4{padding:48px var(--page-pad)}
+  .s4__headline{font-size:40px;line-height:1.15;letter-spacing:-1.2px;text-align:center}
+  .filter{padding:24px 0;gap:32px}
+  .filter__row{flex-direction:column;align-items:stretch;gap:24px}
+  .filter__row--sliders{flex-direction:column;align-items:stretch;gap:32px}
+  .filter__item,.filter__item--slider,.filter__item--sort{
+    width:100%;flex:1 1 auto;height:auto;
+    flex-direction:column;align-items:stretch;gap:8px;
+  }
+  .filter__item--sort{flex-direction:row;align-items:center;justify-content:space-between;gap:16px}
+  .selector{width:100%;height:48px}
+  .selector__btn{flex:1 1 0;min-width:0}
+  /* slider: label → 8px → dráha (40px) → 8px → sivá pilulka 32px */
+  .range{width:100%;flex:0 0 auto;height:40px}
+  .filter__value{width:100%;height:32px;flex:0 0 auto;text-align:center}
+  .filter__count{text-align:center}
+  .listings{grid-template-columns:1fr;gap:16px}
+  .listing__photo{height:auto;aspect-ratio:345 / 220}
+  .listing__body{padding:24px;gap:24px}
+  .listing__tags{gap:8px}
+  .listing__price-row{flex-direction:column;align-items:stretch;gap:24px}
+  .listing__buttons{flex-direction:column;width:100%;gap:8px}
+  .listing__buttons .btn{width:100%;height:48px;justify-content:center}
+
+  /* ---------- 06 amenities (scroll-stack aj na mobile) ---------- */
+  .s5{padding:8px var(--page-pad);display:block}
+  .s5__slide{
+    position:sticky;top:8px;
+    height:auto;min-height:0;max-height:none;
+    aspect-ratio:345 / 640;
+    margin-bottom:8px;
+  }
+  .s5__slide:last-child{margin-bottom:0}
+  .s5__content{padding:24px;justify-content:space-between}
+  .s5__top{gap:16px}
+  .s5__eyebrow{font-size:16px;line-height:1.4}
+  .s5__headline{font-size:40px;line-height:1.15;letter-spacing:-1.2px;flex:0 0 auto;max-width:100%}
+  .s5__bottom{flex-direction:column;align-items:stretch;gap:24px}
+  .s5__body{width:auto;max-width:none;flex:0 0 auto;font-size:16px;line-height:1.3}
+
+  /* ---------- 07 lokalita ---------- */
+  .s6{padding:48px var(--page-pad)}
+  .s6__headline{
+    position:static;font-size:40px;line-height:1.15;letter-spacing:-1.2px;
+    text-align:center;margin-bottom:24px;
+  }
+  .s6__map{aspect-ratio:345 / 402;border-radius:12px}   /* mapa na výšku */
+  /* stage sa zväčší na 1020px šírky (1360×0.75) a posunie tak,
+     aby výrez padol presne medzi FLORIAN a SKY PARK */
+  .s6__map-stage{
+    inset:auto;
+    width:295.652cqw;                 /* 1020 / 345 */
+    aspect-ratio:1360 / 720;
+    left:-100cqw;                     /* −345 / 345 */
+    top:-41.304cqw;                   /* −142.5 / 345 */
+  }
+  /* Stage je tu 2,96× širší než viditeľná mapa, takže inset:0 by položil
+     gradienty mimo výrez. Prekrytie preto presne zarovnáme na viditeľnú
+     časť: vodorovne 100/295.652, zvisle 41.304/156.522 a 116.522/156.522. */
+  .s6__map-fade{
+    left:33.824%;  width:33.824%;
+    top:26.389%;   height:74.444%;
+  }
+  /* karty sa presúvajú pod mapu */
+  .s6-cards{position:static;width:100%;margin-top:8px;gap:8px}
+  .s6-card{height:auto;flex-wrap:wrap;padding:8px;background:var(--tag-grey)}
+  .s6-card:hover{background:var(--tag-grey)}
+  .s6-card__thumb{flex:0 0 122px}
+  .s6-card__body{flex:1 1 auto;height:auto;padding:0 0 0 16px}
+  .s6-card__nav{align-self:stretch;justify-content:center;width:100%;height:40px;margin-top:8px}
+
+  /* ---------- 08 galéria ---------- */
+  .gal{padding:48px 0 48px var(--page-pad);gap:32px}
+  .gal__head{flex-direction:column;align-items:stretch;gap:24px}
+  /* 4px padding + 40px button = 48px, aby rámik bol rovnomerný */
+  .gal__selector{flex:0 0 auto;width:100%;height:48px}
+  /* V kompaktnom stave sa hlavička skladá pod seba a selektor zaberá celú
+     šírku — na šípky vedľa neho už nie je miesto (potrebovali by 866 px
+     z 772 dostupných). Na dotyku sa galéria aj tak posúva prstom, takže
+     ich schováme a mobilné rozloženie ostáva presne také ako predtým. */
+  .gal__tools{display:contents}
+  .gal__btn{height:40px}
+  .gal__card{flex:0 0 286px;height:314px}
+  .gal__track{padding-right:var(--page-pad)}
+
+  /* ---------- 09 proces ---------- */
+  .steps{min-height:0;padding:48px 0;gap:32px}
+  .steps__head{flex-direction:column;align-items:flex-start;gap:32px;padding:0 var(--page-pad)}
+  .steps__intro{flex:1 1 auto;max-width:100%;padding-bottom:0}
+  .steps__headline{font-size:40px;line-height:1.15;letter-spacing:-1.2px}
+  .steps__track{padding:0 var(--page-pad);gap:24px}
+  .steps__card{flex:0 0 308px;height:256px;min-height:0}
+
+  /* ---------- 10 kontakt + pätička ---------- */
+  .contact{flex-direction:column;gap:40px;padding:48px var(--page-pad)}
+  .contact__left{padding:0;max-width:100%;flex:1 1 auto}
+  .contact__text{max-width:100%}
+  .contact__headline{font-size:40px;line-height:1.15;letter-spacing:-1.2px}
+  .contact__form{flex:1 1 auto;width:100%;padding:24px}
+  .contact__row{flex-direction:column;gap:24px}
+  /* consent nad tlačidlom, tlačidlo na celú šírku */
+  .contact__submit-row{flex-direction:column;align-items:stretch;gap:24px}
+  .contact__consent{flex:0 0 auto;align-items:flex-start}
+  .contact__submit-row .btn{width:100%;height:48px;justify-content:center}
+  .footer{flex-direction:column;align-items:flex-start;gap:16px;padding:24px}
+  .footer__links{flex-wrap:wrap;gap:16px}
+}
+
+/* ============================================================
+   TABLET — doladenie kompaktného layoutu (768–1024px)
+   Kompaktný blok vyššie je ladený na 393px; na tablete je dosť
+   šírky na 2-stĺpcové rozloženie kariet a landscape mapu, takže
+   sa nič zbytočne nenaťahuje na plnú šírku.
+   ============================================================ */
+@media(min-width:768px) and (max-width:1024px){
+  /* hero — text väčší, tlačidlá vedľa seba */
+  .hero__headline{font-size:44px;letter-spacing:-.9px}
+  .hero__buttons{flex-direction:row;width:auto;gap:12px}
+  .hero__buttons .btn{width:auto;flex:0 0 auto}
+
+  /* 02 karty projektov — 2 vedľa seba, detail stále viditeľný */
+  .s02{flex-direction:row;gap:16px}
+  .project-card{flex:1 1 0;min-width:0}
+
+  /* 04 bento — jeden stĺpec, ale fotky nie na celú výšku */
+  .s3-card--photo{aspect-ratio:16 / 9}
+  .s3-card--photo-sm{aspect-ratio:16 / 9}
+
+  /* 05 ponuka — 2 karty v rade */
+  .listings{grid-template-columns:1fr 1fr}
+  /* filter: rozmery/cena vedľa seba, ostatné pod sebou */
+  .filter__row--sliders{flex-direction:row;gap:24px;flex-wrap:wrap}
+  .filter__item--slider{flex:1 1 300px}
+  .filter__item--sort{flex:1 1 100%}
+
+  /* 06 amenities — menej extrémny pomer strán */
+  .s5__slide{aspect-ratio:5 / 4}
+
+  /* 07 lokalita — landscape mapa (ako na desktope), karty pod ňou v rade.
+     Stage vrátime na desktop stav: inset:0 vyplní mapu (POI/piny sa počítajú
+     v cqw voči jeho šírke), takže netreba mobilné posuny width/left/top. */
+  .s6__map{aspect-ratio:1360 / 720}
+  .s6__map-stage{inset:0;width:auto;height:auto;aspect-ratio:auto}
+  /* stage sa tu opäť kryje s mapou, takže prekrytie vrátime na inset:0 */
+  .s6__map-fade{inset:0;width:auto;height:auto}
+  .s6-cards{flex-direction:row;gap:16px}
+  .s6-card{flex:1 1 0;min-width:0}
+
+  /* 08 galéria — väčšie snímky v slideri */
+  .gal__card{flex:0 0 380px;height:418px}
+}
+
+/* ============================================================
+   MOTION — vstupné animácie (fade / slide)
+
+   Aktívne len keď <html> nesie triedu .motion. Tú pridáva inline
+   skript v <head>, a to iba ak používateľ nemá zapnuté
+   prefers-reduced-motion: reduce. Riadenie je v js/motion.js.
+   ============================================================ */
+/* Zámerne animation, nie transition: komponenty si už svoje transition
+   držia (hover na kartách, .s2 fotky, .s6-card…) a shorthand by im ho
+   prepísal. Po dobehnutí js/motion.js atribút odstráni, takže prvok
+   nezostane visieť na animation fill a hover efekty fungujú normálne. */
+.motion [data-reveal]{opacity:0}
+.motion [data-reveal].is-in{
+  animation:alto-rise var(--reveal-dur,var(--dur-base)) var(--ease-entrance)
+            var(--reveal-delay,0ms) both;
+}
+
+/* varianty */
+.motion [data-reveal="fade"].is-in{                   /* mapa, slider — bez posunu */
+  animation-name:alto-fade-in;
+}
+.motion [data-reveal="lg"].is-in{                     /* nadpisy sekcií */
+  --reveal-dur:var(--dur-lg);--reveal-shift:28px;
+  animation-timing-function:var(--ease-entrance-lg);
+}
+.motion [data-reveal="media"].is-in{                  /* fotografie — dojazd mierky */
+  --reveal-dur:var(--dur-lg);
+  animation-name:alto-rise-media;
+  animation-timing-function:var(--ease-entrance-lg);
+}
+
+@keyframes alto-rise{
+  from{opacity:0;transform:translate3d(0,var(--reveal-shift),0)}
+  to  {opacity:1;transform:none}
+}
+@keyframes alto-rise-media{
+  from{opacity:0;transform:translate3d(0,12px,0) scale(1.03)}
+  to  {opacity:1;transform:none}
+}
+
+/* Header má vlastný transition (padding pri scrollnutí) aj sticky pozíciu,
+   preto ho nabehneme keyframom — nič si tým neprepíšeme. */
+.motion .header{animation:alto-fade-in var(--dur-lg) var(--ease-entrance) 120ms both}
+@keyframes alto-fade-in{from{opacity:0}to{opacity:1}}
+
+/* reduced motion — vypni scroll efekty */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .s5__slide{position:relative;top:auto;height:auto;min-height:0;max-height:none;aspect-ratio:1408/720;transform:none!important;opacity:1!important;filter:none!important}
+  .s5__content{position:absolute}
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  /* poistka, keby sa .motion dostala na <html> (napr. zmena nastavenia za behu) */
+  .motion [data-reveal]{opacity:1!important;transform:none!important}
+}

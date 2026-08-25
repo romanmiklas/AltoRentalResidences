@@ -1,0 +1,12 @@
+# robots.txt — www.altorentalresidences.sk
+
+User-agent: *
+Allow: /
+
+# CSS, JS, fonty ani obrázky neblokujeme zámerne — Google stránku vykresľuje
+# a bez nich by ju vyhodnotil ako rozbitú (a ponuka bytov sa dopĺňa cez JS).
+
+# /404.html tu nezakazujeme: má vlastné <meta name="robots" content="noindex">
+# a keby sme ho zakázali v robots.txt, robot by sa k tomu noindexu nedostal.
+
+Sitemap: https://www.altorentalresidences.sk/sitemap.xml
