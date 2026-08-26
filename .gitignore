@@ -10,5 +10,7 @@ _*.html
 
 # POZOR: prístupové údaje na SMTP — do repozitára nepatria.
 # V repe je len vzor contact.config.example.php; na serveri sa
-# súbor premenuje na contact.config.php a doplní sa doň heslo.
+# súbor premenuje na contact.config.php
+realpad.config.php a doplní sa doň heslo.
 contact.config.php
+realpad.config.php

@@ -156,7 +156,7 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 
 # konfigurácia s heslom na SMTP sa nesmie dať stiahnuť
-<FilesMatch "^contact\.config\.php$">
+<FilesMatch "^(contact|realpad)\.config\.php$">
   Require all denied
 </FilesMatch>
 <IfModule mod_rewrite.c>

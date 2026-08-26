@@ -90,9 +90,13 @@
     );
   const fmt = (n) => n.toLocaleString(t("locale"));
   const area = (n) => n.toFixed(2).replace(".", t("decimal"));
-  /* cover fotka bytu — stiahnutá z webu projektu do assets/img/apt/
-     (názov = <projekt>-<id>.jpg). Po napojení Realpadu sem príde URL z feedu. */
-  const aptImg = (f) => `assets/img/apt/${f.project}-${f.id}.jpg`;
+  /* Cover fotka bytu. Z Realpadu chodí pole `photos` s trvalými adresami
+     na cms.realpad.eu — tie majú prednosť. Pilotné dáta ho nemajú, tam sa
+     použije lokálny súbor assets/img/apt/<projekt>-<id>.jpg. */
+  const aptImg = (f) =>
+    Array.isArray(f.photos) && f.photos.length
+      ? f.photos[0]
+      : `assets/img/apt/${f.project}-${f.id}.jpg`;
 
   /* Byty bez zverejnenej ceny (rezervované/prenajaté) prejdú cenovým
      filtrom len dovtedy, kým je rozsah nedotknutý — akonáhle používateľ
@@ -1068,9 +1072,45 @@
     });
   }
 
+  /* ----------------------------------------------------------
+     REALPAD — živé dáta namiesto pilotného poľa
+
+     realpad.php vracia už uprataný zoznam v rovnakom tvare, aký
+     používajú karty. Kým nie sú na serveri vyplnené prístupy,
+     endpoint vráti 503 a web ticho beží na pilotných dátach —
+     nasadenie teda nič nerozbije a prepnutie je len doplnenie
+     realpad.config.php.
+     ---------------------------------------------------------- */
+  async function loadFromRealpad() {
+    if (!hasOffer) return;
+    try {
+      const res = await fetch("realpad.php", { headers: { Accept: "application/json" } });
+      if (!res.ok) return;                       // 503 = ešte nenakonfigurované
+      const data = await res.json();
+      if (!data.ok || !Array.isArray(data.flats) || !data.flats.length) return;
+
+      /* prevezmeme len záznamy, ktoré majú všetko potrebné —
+         neúplný byt by rozbil filtre aj radenie */
+      const usable = data.flats.filter(
+        (f) => f.id && f.project && f.rooms != null && f.floor != null && f.area != null
+      );
+      if (!usable.length) return;
+
+      FLATS.length = 0;
+      FLATS.push(...usable);
+      state.visible = PAGE_SIZE;
+      render();
+      paintProjectCounts?.();
+    } catch (err) {
+      /* sieť alebo API nedostupné — pilotné dáta ostávajú */
+    }
+  }
+
   /* ---------- init ---------- */
   render();
   /* obnov jazyk z minulej návštevy — inak ostáva SK tak, ako je v HTML */
+  loadFromRealpad();
+
   const savedLang = i18n.stored();
   if (savedLang) i18n.set(savedLang);   // set() sa sám ignoruje pri zhode
   syncLangUI();
