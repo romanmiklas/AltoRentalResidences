@@ -86,22 +86,21 @@ if ($ts > 0 && (microtime(true) * 1000 - $ts) < MIN_SECONDS * 1000) {
     respond(false, 'too_fast', 429);
 }
 
-/* ---------- 4. limit na IP ---------- */
-$ip   = (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
-$file = sys_get_temp_dir() . '/alto-contact-' . sha1($ip) . '.txt';
-$now  = time();
-$hits = [];
-if (is_readable($file)) {
-    $hits = array_filter(
-        array_map('intval', explode(',', (string) file_get_contents($file))),
-        static fn(int $t): bool => $t > $now - RATE_WINDOW
-    );
-}
-if (count($hits) >= RATE_MAX) {
+/* ---------- 4. limity ----------
+   Dva stupne: na jednu IP a zároveň globálne. Ten druhý je dôležitý —
+   bez neho by stačilo rozložiť útok na viac adries a schránka by sa
+   zaplavila aj tak. */
+require_once __DIR__ . '/ratelimit.php';
+$ip = rl_ip();
+
+[$okIp, $retry] = rl_hit('contact', RATE_MAX, RATE_WINDOW);
+if (!$okIp) { header('Retry-After: ' . $retry); respond(false, 'rate_limit', 429); }
+
+[$okAll] = rl_hit('contact-all', 60, 3600, 'global');
+if (!$okAll) {
+    error_log('ALTO kontakt: prekročený globálny limit odosielania');
     respond(false, 'rate_limit', 429);
 }
-$hits[] = $now;
-@file_put_contents($file, implode(',', $hits), LOCK_EX);
 
 /* ---------- 5. validácia ---------- */
 $name    = field('name', 100);
@@ -224,8 +223,10 @@ function smtpSend(array $s, string $to, string $subject, string $body, array $ma
 /* ---------- 6. e-mail ---------- */
 $projectLabel = ['skypark' => 'SKY PARK', 'florian' => 'FLORIAN'][$project] ?? $project;
 
-$subject = 'Nová správa z webu — ' . $projectLabel
-         . ($apart !== '' ? ' — byt ' . $apart : '');
+/* headerSafe aj tu: mb_encode_mimeheader síce zalomenie zabalí do base64,
+   ale nechceme, aby bezpečnosť predmetu závisela od správania knižnice. */
+$subject = headerSafe('Nová správa z webu — ' . $projectLabel
+         . ($apart !== '' ? ' — byt ' . $apart : ''));
 
 $lines = [
     'Nová správa z kontaktného formulára na www.altorentalresidences.sk',

@@ -32,6 +32,15 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: public, max-age=300');
 header('X-Content-Type-Options: nosniff');
 
+require_once __DIR__ . '/ratelimit.php';
+
+/* Endpoint je verejný a každé jeho minutie cache spustí volanie na
+   Realpad. Bez limitu by stačil jednoduchý skript, aby nám Realpad
+   účet dočasne zablokoval. Čítanie z cache je lacné, preto štedrý
+   limit na IP; skutočná ochrana je globálny strop na volania von. */
+[$okIp, $retryIp] = rl_hit('realpad', 60, 60);
+if (!$okIp) { rl_reject($retryIp); }
+
 $cfg = @include __DIR__ . '/realpad.config.php';
 $cfg = is_array($cfg) ? $cfg : [];
 
@@ -200,7 +209,32 @@ $baseUrls = [
 ];
 
 /* diagnostika pre prvé spustenie — vypne sa prázdnym debug_key */
-$debug = ($cfg['debug_key'] ?? '') !== '' && ($_GET['debug'] ?? '') === $cfg['debug_key'];
+$debug = ($cfg['debug_key'] ?? '') !== '' && hash_equals((string) $cfg['debug_key'], (string) ($_GET['debug'] ?? ''));
+
+/* Keď vyprší cache, môže naraz doraziť veľa požiadaviek. Von pustíme
+   len jednu — ostatné medzitým obslúžime staršou kópiou, nech na
+   Realpad nespadne lavína („single flight"). */
+$lock = rl_lock('realpad-fetch');
+if ($lock === false) {
+    if ($cache) {
+        rp_out(['ok' => true, 'source' => 'cache-stale', 'fetched' => $cache['fetched'],
+                'flats' => $cache['flats']]);
+    }
+    rl_reject(5);
+}
+
+/* Strop na volania von. Pri 15-minútovej cache sú to bežne 4 cykly za
+   hodinu; 20 je rezerva na nasadenie a ladenie, ale útok utne. */
+[$okOut] = rl_hit('realpad-upstream', 20, 3600, 'global');
+if (!$okOut) {
+    rl_unlock($lock);
+    error_log('ALTO Realpad: dosiahnutý hodinový strop volaní na API');
+    if ($cache) {
+        rp_out(['ok' => true, 'source' => 'cache-stale', 'fetched' => $cache['fetched'],
+                'flats' => $cache['flats']]);
+    }
+    rl_reject(300);
+}
 
 $flats = [];
 $errors = [];
@@ -208,6 +242,7 @@ foreach (($cfg['projects'] ?? []) as $key => $projectId) {
     [$xml, $err] = rp_fetch($cfg, (string)$projectId);
     if ($err !== null) { $errors[$key] = $err; continue; }
     if ($debug) {
+        rl_unlock($lock);
         header('Content-Type: text/plain; charset=utf-8');
         echo "=== $key ($projectId) — prvých 4000 znakov surovej odpovede ===\n\n";
         echo substr($xml, 0, 4000);
@@ -217,6 +252,8 @@ foreach (($cfg['projects'] ?? []) as $key => $projectId) {
 }
 
 /* ---------- výsledok ---------- */
+rl_unlock($lock);
+
 if (!$flats) {
     error_log('ALTO Realpad: ' . json_encode($errors, JSON_UNESCAPED_UNICODE));
     if ($cache) {

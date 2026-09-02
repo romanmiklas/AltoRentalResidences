@@ -10,6 +10,10 @@ AddDefaultCharset utf-8
 Options -Indexes
 DirectoryIndex index.html
 ServerSignature Off
+# Pozn.: verziu Apache v hlavičke Server skryje až „ServerTokens Prod",
+# ktoré sa dá nastaviť len v konfigurácii servera, nie v .htaccess.
+# Ak to hosting umožní, oplatí sa o to požiadať — inak útočník rovno
+# vidí, na akú verziu má skúšať známe zraniteľnosti.
 
 ErrorDocument 404 /404.html
 
