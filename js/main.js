@@ -1026,7 +1026,7 @@
       input.addEventListener("change", () => markField(input, !input.checkValidity()));
     });
 
-    /* časová pečiatka pre antispam kontrolu v contact.php */
+    /* časová pečiatka pre antispam kontrolu v api/contact.php */
     const tsInput = document.getElementById("cTs");
     if (tsInput) tsInput.value = String(Date.now());
 
@@ -1053,7 +1053,7 @@
       submitBtn.disabled = true;
 
       try {
-        const res = await fetch("contact.php", {
+        const res = await fetch("api/contact.php", {
           method: "POST",
           headers: { Accept: "application/json" },
           body: new FormData(contactForm),
@@ -1075,16 +1075,16 @@
   /* ----------------------------------------------------------
      REALPAD — živé dáta namiesto pilotného poľa
 
-     realpad.php vracia už uprataný zoznam v rovnakom tvare, aký
+     api/realpad.php vracia už uprataný zoznam v rovnakom tvare, aký
      používajú karty. Kým nie sú na serveri vyplnené prístupy,
      endpoint vráti 503 a web ticho beží na pilotných dátach —
      nasadenie teda nič nerozbije a prepnutie je len doplnenie
-     realpad.config.php.
+     api/realpad.config.php.
      ---------------------------------------------------------- */
   async function loadFromRealpad() {
     if (!hasOffer) return;
     try {
-      const res = await fetch("realpad.php", { headers: { Accept: "application/json" } });
+      const res = await fetch("api/realpad.php", { headers: { Accept: "application/json" } });
       if (!res.ok) return;                       // 503 = ešte nenakonfigurované
       const data = await res.json();
       if (!data.ok || !Array.isArray(data.flats) || !data.flats.length) return;

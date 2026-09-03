@@ -8,9 +8,8 @@
 # dočasné testovacie stránky (vznikajú pri ladení)
 _*.html
 
-# POZOR: prístupové údaje na SMTP — do repozitára nepatria.
-# V repe je len vzor contact.config.example.php; na serveri sa
-# súbor premenuje na contact.config.php
-realpad.config.php a doplní sa doň heslo.
-contact.config.php
-realpad.config.php
+# POZOR: prístupové údaje na SMTP a do Realpadu — do repozitára nepatria.
+# V repe sú len vzory api/*.config.example.php; na serveri sa skopírujú
+# bez „.example" a doplnia sa do nich heslá.
+api/contact.config.php
+api/realpad.config.php

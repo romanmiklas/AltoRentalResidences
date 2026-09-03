@@ -96,7 +96,7 @@ ErrorDocument 404 /404.html
   ExpiresByType application/xml           "access plus 1 hour"
   ExpiresByType text/xml                  "access plus 1 hour"
 
-  # odpoveď z contact.php sa nesmie cachovať vôbec
+  # odpoveď z api/contact.php sa nesmie cachovať vôbec
   ExpiresByType application/json          "access plus 0 seconds"
 
   ExpiresByType text/css                  "access plus 1 hour"
@@ -155,12 +155,15 @@ ErrorDocument 404 /404.html
 
 
 # ---------- ochrana citlivých súborov ----------
+# FilesMatch porovnáva samotný názov súboru, takže platí aj pre /api/.
 <FilesMatch "^\.(htaccess|htpasswd|env|git.*)">
   Require all denied
 </FilesMatch>
 
-# konfigurácia s heslom na SMTP sa nesmie dať stiahnuť
-<FilesMatch "^(contact|realpad)\.config\.php$">
+# konfigurácia s heslom na SMTP sa nesmie dať stiahnuť.
+# Zahrnuté sú aj vzory .config.example.php — tie síce heslá neobsahujú,
+# ale prezrádzajú štruktúru nastavení a na server vôbec nepatria.
+<FilesMatch "^(contact|realpad)\.config(\.example)?\.php$">
   Require all denied
 </FilesMatch>
 <IfModule mod_rewrite.c>
