@@ -31,8 +31,8 @@
     return;
   }
 
-  const STEP = 98;                 // predvolený rozostup v skupine
-  const STEP_TIGHT = 63;           // hustejší rozostup pre veľké mriežky (ponuka)
+  const STEP = 127;                 // predvolený rozostup v skupine
+  const STEP_TIGHT = 82;           // hustejší rozostup pre veľké mriežky (ponuka)
   const MAX_STEPS = 7;             // strop — 9. a ďalšia položka už nečaká dlhšie
 
   /* Spúšťač: horná hrana prvku prejde 88 % výšky okna. */
@@ -70,7 +70,7 @@
       el.removeAttribute("data-reveal");
     };
     el.addEventListener("animationend", clean);
-    el.__revealTimer = setTimeout(clean, 3400);
+    el.__revealTimer = setTimeout(clean, 4420);
   }
 
   function children(group) {

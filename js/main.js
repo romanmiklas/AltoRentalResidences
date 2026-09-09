@@ -716,7 +716,7 @@
     };
     const scheduleClose = () => {
       clearTimeout(closeTimer);
-      closeTimer = setTimeout(() => setOpen(false), 250);
+      closeTimer = setTimeout(() => setOpen(false), 325);
     };
 
     // hover: otvorí sa nad "Projekty", drží sa nad celým pill-om
@@ -788,7 +788,7 @@
       mmenu.classList.remove("is-open");
       document.body.classList.remove("is-menu-open");
       burger.setAttribute("aria-expanded", "false");
-      hideTimer = setTimeout(() => { mmenu.hidden = true; }, 770);
+      hideTimer = setTimeout(() => { mmenu.hidden = true; }, 1000);
     };
 
     /* Fullscreen menu patrí len kompaktnému rozloženiu. Na desktope ten istý
@@ -944,7 +944,7 @@
 
   /* Plynulý posun na cieľ; vráti funkciu na prerušenie, aby sa dal
      dojazd kedykoľvek chytiť a prekryť novým gestom. */
-  function glide(el, to, duration = 590) {
+  function glide(el, to, duration = 767) {
     const from = el.scrollLeft;
     const dist = to - from;
     if (Math.abs(dist) < 1) return () => {};
@@ -1061,7 +1061,7 @@
       const projected = track.scrollLeft + project(velocity);
       const target = Math.max(0, Math.min(snapPoint(track, projected), max));
       /* trvanie podľa dĺžky dojazdu, nech krátky posun netrvá rovnako ako dlhý */
-      const dur = Math.min(980, Math.max(364, Math.abs(target - track.scrollLeft) * 1.26));
+      const dur = Math.min(1274, Math.max(473, Math.abs(target - track.scrollLeft) * 1.64));
 
       requestAnimationFrame(() => {
         track.classList.remove("is-dragging");
