@@ -83,7 +83,10 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+/* Zámerne BEZ scroll-behavior:smooth — skrolovanie na kotvu si riadi
+   js/main.js vlastným rAF, aby sa dalo nastaviť trvanie aj krivka.
+   Keby tu smooth ostalo, prehliadač by každé window.scrollTo() z toho
+   rAF ešte raz animoval a obe krivky by si liezli do cesty. */
 /* kotvy z navpillu nesmú skončiť pod sticky headerom (88px v scrollnutom stave) */
 #projekty,#typy,#standard,#ponuka,#lokalita,#galeria,#postup,#kontakt{scroll-margin-top:88px}
 body{

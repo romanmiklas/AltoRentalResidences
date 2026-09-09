@@ -336,13 +336,119 @@
   });
 
   /* ----------------------------------------------------------
+     SKROLOVANIE NA KOTVU
+
+     Natívne `scroll-behavior:smooth` znie dobre, ale trvanie aj krivku
+     drží prehliadač — Chrome dojde za ~300 ms bez ohľadu na to, či
+     skáčeme o obrazovku alebo cez celú stránku. Spomaliť sa to nedá,
+     preto vlastný rAF, rovnako ako pri carouseli.
+
+     Krivka je in-out: pohyb sa rozbieha z nuly. Ease-out štartuje na
+     plnej rýchlosti a práve ten skok pôsobil sekane.
+
+     Doraz na konci je prekmit o pár pixelov, ktorý sa vráti späť —
+     váha `w` je na oboch koncoch nulová, takže nikde nevznikne zlom
+     a dojazd sedí presne na cieli. Prekmit je zastropovaný v pixeloch;
+     keby bol percentom z dráhy, pri dlhom skoku by to bol viditeľný
+     poskok. Vychádza z neho asi 11 px, čo je akurát cítiť.
+     ---------------------------------------------------------- */
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* ease-in-out quart */
+  const easeInOutQuart = (t) =>
+    t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+
+  /* Vlna dorazu: t^a(1-t), znormalizovaná na vrchol 1. Exponent určuje,
+     kedy vrchol nastane — a=6 ho posunie na 86 % času, kde je hlavná
+     krivka už na 99,7 %, takže sa prekmit naozaj prejaví. Pri skoršom
+     vrchole ho hlavný pohyb z väčšej časti pohltí. */
+  const BUMP_A = 6;
+  const BUMP_NORM = Math.pow(BUMP_A / (BUMP_A + 1), BUMP_A) / (BUMP_A + 1);
+  const bumpWave = (t) => (Math.pow(t, BUMP_A) * (1 - t)) / BUMP_NORM;
+
+  let scrollRaf = 0;
+  const stopScroll = () => {
+    if (scrollRaf) { cancelAnimationFrame(scrollRaf); scrollRaf = 0; }
+  };
+
+  /* Používateľ musí vedieť dojazd kedykoľvek prevziať — inak ho dlhý
+     posun na sekundu a pol uväzní. Vlastné window.scrollTo() nižšie
+     tieto udalosti nespúšťa, takže sa animácia nezruší sama. */
+  ["wheel", "touchstart", "pointerdown", "keydown"].forEach((ev) =>
+    window.addEventListener(ev, stopScroll, { passive: true })
+  );
+
+  function scrollToY(to) {
+    const from = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    to = Math.max(0, Math.min(to, max));
+    const dist = to - from;
+
+    if (reducedMotion.matches || Math.abs(dist) < 2) {
+      stopScroll();
+      window.scrollTo(0, to);
+      return;
+    }
+    stopScroll();
+
+    /* trvanie podľa dĺžky skoku, nech krátky nezaberie toľko čo dlhý */
+    const dur = Math.min(1600, Math.max(620, Math.abs(dist) * 0.45));
+    /* pri krátkom skoku by prekmit len vyzeral ako chyba */
+    const bump = Math.abs(dist) > 260
+      ? Math.sign(dist) * Math.min(Math.abs(dist) * 0.02, 14)
+      : 0;
+    const t0 = performance.now();
+
+    const step = (now) => {
+      const t = Math.min(1, (now - t0) / dur);
+      window.scrollTo(0, from + dist * easeInOutQuart(t) + bump * bumpWave(t));
+      scrollRaf = t < 1 ? requestAnimationFrame(step) : 0;
+    };
+    scrollRaf = requestAnimationFrame(step);
+  }
+
+  /* Horná hrana prvku mínus jeho scroll-margin-top — to je tá istá
+     rezerva pod sticky hlavičkou, akú si drží natívny skok na kotvu. */
+  function anchorTop(el) {
+    const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    return window.scrollY + el.getBoundingClientRect().top - margin;
+  }
+
+  function scrollToEl(el) {
+    if (el) scrollToY(anchorTop(el));
+  }
+
+  /* Delegovane, aby to platilo aj pre odkazy vykreslené až v JS
+     (napr. „Mám záujem" na kartách bytov). Beží až po vlastných
+     obsluhách odkazu, takže mobilné menu sa stihne odomknúť skôr,
+     než začneme skrolovať — inak by body.is-menu-open posun zablokoval. */
+  document.addEventListener("click", (e) => {
+    if (e.defaultPrevented || e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest('a[href^="#"]');
+    if (!a || a.hash.length < 2) return;
+
+    const target = document.getElementById(a.hash.slice(1));
+    if (!target) return;
+
+    e.preventDefault();
+    scrollToEl(target);
+    history.pushState(null, "", a.hash);
+
+    /* Natívny skok na kotvu presúva aj fokus. Bez toho by klávesnica
+       ostala tam, kde bola, a ďalší Tab by skočil späť hore. */
+    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: true });
+  });
+
+  /* ----------------------------------------------------------
      SEKCIA 02 — tlačidlá na kartách projektov
      „Zobraziť ponuku" prednastaví filter projektu a skočí na ponuku.
      ---------------------------------------------------------- */
   document.querySelectorAll("[data-project-filter]").forEach((btn) => {
     btn.addEventListener("click", () => {
       setProjectFilter(btn.dataset.projectFilter);
-      document.getElementById("ponuka")?.scrollIntoView({ behavior: "smooth" });
+      scrollToEl(document.getElementById("ponuka"));
     });
   });
 
@@ -466,7 +572,7 @@
         state.rooms = parseFloat(item.dataset.variant);
         state.visible = PAGE_SIZE;
         render();
-        document.getElementById("ponuka").scrollIntoView({ behavior: "smooth" });
+        scrollToEl(document.getElementById("ponuka"));
       });
     });
 
@@ -1045,8 +1151,11 @@
         if (invalid && !firstInvalid) firstInvalid = input;
       });
       if (firstInvalid) {
-        firstInvalid.focus();
-        firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+        /* preventScroll: focus() by prvok priskroloval sám a okamžite,
+           takže by naša animácia už nemala čo animovať */
+        firstInvalid.focus({ preventScroll: true });
+        { const r = firstInvalid.getBoundingClientRect();
+          scrollToY(window.scrollY + r.top - (window.innerHeight - r.height) / 2); }
         return;
       }
 
