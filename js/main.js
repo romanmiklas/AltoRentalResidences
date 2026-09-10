@@ -663,10 +663,18 @@
            Umocnenie na druhú dá ease-in, aby nebolo vidno moment zapnutia. */
         const blurStart = clamp(1 - (textOffsets[i] || 0) / distance, 0.35, 0.85);
         const bp = clamp((progress - blurStart) / (1 - blurStart), 0, 1);
-        const blur = bp * bp * 4;
+        /* Blur zaokrúhlený na štvrtiny pixela: každá zmena filtra núti
+           prehliadač prerastrovať celú kartu (1568x740 px), takže po
+           stotinách by to bola nová rastrácia každý frame. Štýl sa zapíše
+           len keď sa hodnota naozaj zmenila — inak prehliadač berie aj
+           rovnaký zápis ako zmenu. */
+        const blur = Math.round(bp * bp * 4 * 4) / 4;
+        const stateKey = `${scale.toFixed(4)}|${opacity.toFixed(3)}|${blur}`;
+        if (slide.__stackState === stateKey) return;
+        slide.__stackState = stateKey;
         slide.style.transform = `scale(${scale.toFixed(4)})`;
         slide.style.opacity = opacity.toFixed(3);
-        slide.style.filter = `blur(${blur.toFixed(2)}px)`;
+        slide.style.filter = blur ? `blur(${blur}px)` : "";
       });
     }
 
