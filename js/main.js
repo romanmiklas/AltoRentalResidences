@@ -534,12 +534,25 @@
       panel.classList.toggle("is-open", open);
     }
 
+    /* Rám dorastie do svojej veľkosti (keyframe s2-grow v CSS). Odobrať,
+       vynútiť reflow a pridať — inak by sa animácia pri ďalšom prepnutí
+       nespustila znova. Kým beží vstupná reveal animácia (prvok má ešte
+       data-reveal), nechávame ju dobehnúť; obe sú `animation` a prepísali
+       by sa. */
+    function grow(photoEl) {
+      if (photoEl.hasAttribute("data-reveal")) return;
+      photoEl.classList.remove("is-growing");
+      void photoEl.offsetWidth;
+      photoEl.classList.add("is-growing");
+    }
+
     function activate(item) {
       const v = item.dataset.variant;
       s2.dataset.variant = v;
       items.forEach((i) => i.classList.toggle("is-active", i === item));
       crossfade(photoLeft, S2_IMAGES[v][0]);
       crossfade(photoRight, S2_IMAGES[v][1]);
+      if (!isMobile()) { grow(photoLeft); grow(photoRight); }
       if (isMobile()) items.forEach((i) => setPanel(i, i === item));
     }
 

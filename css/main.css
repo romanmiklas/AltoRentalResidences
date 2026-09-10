@@ -666,16 +666,20 @@ body.is-menu-open{overflow:hidden}
 }
 .s2__img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:0;transform:scale(1);
-  transition:opacity .82s ease,transform 1.27s var(--ease-soft);
+  opacity:0;transition:opacity .82s ease;
 }
-/* Rast pri prepnutí (podľa here-away.com, sekcia typov ubytovania):
-   prichádzajúca fotka sa počas prelínania zväčšuje na 1,06, odchádzajúca
-   sa vracia na 1 — fotka sa teda „vynára rastom", nie len prelína.
-   Transform beží dlhšie než opacity, takže rast ešte chvíľu dobieha
-   po tom, čo je fotka už plne viditeľná. Rám má overflow:hidden,
-   zväčšenie preto len jemne oreže okraje. */
-.s2__img.is-active{opacity:1;transform:scale(1.06)}
+.s2__img.is-active{opacity:1}
+
+/* Rast pri prepnutí typu (podľa here-away.com, „Explore by accommodation
+   type"). Referencia zväčšuje celý rám fotky vo chvíli, keď sa fotka
+   objavuje — rast je jej príchod. Prvý pokus škáloval obsah vnútri
+   rámu s overflow:hidden, čo oko číta ako zoom, nie ako rast; preto
+   je transform na ráme: pri každom prepnutí dorastie z 0,9 do svojej
+   veľkosti z Figmy, kým sa v ňom nová fotka prelína. Triedu prehadzuje
+   JS (activate v main.js), aby sa animácia spustila znova aj pri
+   opakovanom prepínaní. */
+@keyframes s2-grow{from{transform:scale(.9)}to{transform:none}}
+.s2__photo.is-growing{animation:s2-grow 1.27s var(--ease-soft) both}
 
 /* Pozície + rozmery fotiek 1:1 podľa Figmy (4:305).
    1-izbové a 2-izbové = 330×330, 1,5-izbové a 3-izbové = 345×345. */
