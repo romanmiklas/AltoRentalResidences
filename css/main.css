@@ -626,13 +626,20 @@ body.is-menu-open{overflow:hidden}
    ============================================================ */
 .s2{
   position:relative;
-  height:860px;
+  /* min-height, nie height: 860 px sedí na slovenské názvy v jednom
+     riadku. Anglické („1.5-room apartments") sa pri 64 px zalamujú do
+     dvoch a zoznam bol vyšší než sekcia — s overflow:hidden končil
+     posledný názov tesne pri bento boxe pod ním. Sekcia teraz obopína
+     obsah, takže spodných 100 px + 144 px odsadenia zoznamu ostáva. */
+  min-height:860px;
   background:var(--alto-white);
-  display:flex;gap:var(--gutter);align-items:center;justify-content:center;
+  display:flex;gap:var(--gutter);align-items:stretch;justify-content:center;
   padding:100px var(--pad-x);
   overflow:hidden;
 }
-.s2__col{position:relative;flex:1 1 0;min-width:0;height:100%}
+/* Bočné stĺpce sa naťahujú na výšku stredného (stretch), takže fotky
+   s top/bottom v px sledujú textový blok aj keď sekcia narastie. */
+.s2__col{position:relative;flex:1 1 0;min-width:0}
 .s2__col--center{
   display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:flex-start;
 }
@@ -678,7 +685,7 @@ body.is-menu-open{overflow:hidden}
    veľkosti z Figmy, kým sa v ňom nová fotka prelína. Triedu prehadzuje
    JS (activate v main.js), aby sa animácia spustila znova aj pri
    opakovanom prepínaní. */
-@keyframes s2-grow{from{transform:scale(.9)}to{transform:none}}
+@keyframes s2-grow{from{transform:scale(.2)}to{transform:none}}   /* z 20 % do veľkosti z Figmy, ako referencia */
 .s2__photo.is-growing{animation:s2-grow 1.27s var(--ease-soft) both}
 
 /* Pozície + rozmery fotiek 1:1 podľa Figmy (4:305).
