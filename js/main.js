@@ -839,6 +839,51 @@
     const isDesktop = () => window.matchMedia("(min-width: 1025px)").matches;
     let navManualOpen = false;
 
+    /* Šírka skupiny odkazov pri zbalení/rozbalení.
+
+       Pôvodne sa šírka zmerala raz pri štarte a držala sa v --nav-items-w
+       natrvalo. Stačilo, aby meranie prebehlo v zlý moment (okno ešte bez
+       rozmerov, mobilný layout so skupinou display:none, font ešte
+       nenačítaný) a zlá hodnota ostala v rozbalenom stave visieť — pill
+       potom bol buď zúžený na nulu, alebo roztiahnutý cez celú stránku.
+
+       Teraz je rozbalený stav vždy width:auto (bez premennej). Konkrétna
+       hodnota v px sa nastaví len na čas animácie — zmeria sa tesne pred
+       zbalením/rozbalením a po dobehnutí prechodu sa zase odstráni. Staré
+       meranie tak nemá kde prežiť. */
+    const navItems = document.querySelector(".nav__items");
+    const navItemsInner = document.querySelector(".nav__items-inner");
+
+    const measureNav = () => {
+      if (!navItemsInner) return null;
+      const w = navItemsInner.getBoundingClientRect().width;
+      /* poistka proti nezmyselnej hodnote: 0 pri skrytej skupine,
+         obrovské číslo pri rozbitom layoute — vtedy radšej bez animácie */
+      if (!(w > 40) || w > window.innerWidth * 0.7) return null;
+      return w;
+    };
+
+    let navCollapsed = false;
+    const setCollapsed = (collapsed) => {
+      if (collapsed === navCollapsed) return;
+      navCollapsed = collapsed;
+      if (navItems) {
+        const w = measureNav();
+        if (w !== null) {
+          navItems.style.setProperty("--nav-items-w", w + "px");
+          void navItems.offsetWidth;          /* reflow — nech má prechod odkiaľ štartovať */
+        } else {
+          navItems.style.removeProperty("--nav-items-w");
+        }
+      }
+      headerEl.classList.toggle("is-collapsed", collapsed);
+    };
+    /* po rozbalení px hodnotu zahodíme — ďalej platí auto */
+    navItems?.addEventListener("transitionend", (e) => {
+      if (e.target !== navItems || e.propertyName !== "width") return;
+      if (!navCollapsed) navItems.style.removeProperty("--nav-items-w");
+    });
+
     const syncHeader = () => {
       // 104px -> 88px hneď po prvom scrollnutí
       headerEl.classList.toggle("is-compact", window.scrollY > 8);
@@ -849,27 +894,12 @@
       // späť v hero => ručné rozbalenie zabudneme, pill je aj tak plný
       if (!past) navManualOpen = false;
       const collapsed = past && isDesktop() && !navManualOpen;
-      headerEl.classList.toggle("is-collapsed", collapsed);
+      setCollapsed(collapsed);
       navBurger?.setAttribute("aria-expanded", String(!collapsed));
       /* Zbalená skupina má nulovú šírku, ale odkazy v nej by sa inak dali
          vytabovať naslepo — inert ich vyradí z fokusu aj z čítačiek. */
       navItems?.toggleAttribute("inert", collapsed);
     };
-
-    /* Prechod šírky potrebuje konkrétnu hodnotu — auto sa nedá animovať.
-       Meriame prirodzenú šírku obsahu (drží ju width:max-content) a po
-       zmene okna či jazyka ju prepočítame. */
-    const navItems = document.querySelector(".nav__items");
-    const navItemsInner = document.querySelector(".nav__items-inner");
-    const measureNav = () => {
-      if (!navItems || !navItemsInner) return;
-      navItems.style.setProperty(
-        "--nav-items-w", navItemsInner.getBoundingClientRect().width + "px"
-      );
-    };
-    measureNav();
-    window.addEventListener("resize", measureNav, { passive: true });
-    document.addEventListener("alto:langchange", measureNav);
 
     const navBurger = document.getElementById("navBurger");
     if (navBurger) {
@@ -898,6 +928,11 @@
     };
     window.addEventListener("scroll", requestHeaderSync, { passive: true });
     window.addEventListener("resize", requestHeaderSync, { passive: true });
+    /* Pri reloade prehliadač obnoví pozíciu skrolu až keď je stránka dosť
+       vysoká (lazy obsah), často bez scroll udalosti — header by ostal
+       v stave hero (biele logo, plný pill) uprostred stránky. */
+    window.addEventListener("load", syncHeader);
+    window.addEventListener("pageshow", syncHeader);
     syncHeader();
   }
 
