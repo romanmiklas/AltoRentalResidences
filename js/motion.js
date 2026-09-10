@@ -41,18 +41,43 @@
     threshold: 0,
   });
 
+  /* Všetko, čo observer práve sleduje — kvôli poistke na konci stránky. */
+  const watched = new Set();
+  function watch(el)   { watched.add(el); io.observe(el); }
+  function trigger(el) {
+    watched.delete(el);
+    io.unobserve(el);
+    if (el.hasAttribute("data-reveal-group") || el.__revealChildren) {
+      children(el).forEach(show);
+    } else {
+      show(el);
+    }
+  }
+
   function onIntersect(entries) {
     entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target;
-      io.unobserve(el);
-      if (el.hasAttribute("data-reveal-group") || el.__revealChildren) {
-        children(el).forEach(show);
-      } else {
-        show(el);
-      }
+      if (entry.isIntersecting) trigger(entry.target);
     });
   }
+
+  /* Posledné prvky stránky sa k 88 % hranici nemusia dostať vôbec:
+     100 px vysoký footer má pri doskrolovaní na koniec vrch na ~90 %
+     výšky okna (2000x1034: 25 px pod hranicou, 1440x900: 9 px) a
+     observer ho nikdy nespustí — footer ostal na opacity:0, teda
+     „zmizol". Na konci dokumentu preto ukážeme všetko sledované, čo je
+     v okne. Bez rAF, aby to fungovalo aj v pozastavenej karte. */
+  function revealAtEnd() {
+    if (!watched.size) return;
+    const end = document.documentElement.scrollHeight - window.innerHeight;
+    if (window.scrollY < end - 4) return;
+    watched.forEach(function (el) {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) trigger(el);
+    });
+  }
+  window.addEventListener("scroll", revealAtEnd, { passive: true });
+  window.addEventListener("resize", revealAtEnd, { passive: true });
+  window.addEventListener("load", revealAtEnd);
 
   /* Po dobehnutí animácie zahodíme data-reveal aj triedu — prvok sa vráti
      do úplne bežného stavu, takže nič nedrží animation fill a hover efekty
@@ -109,7 +134,7 @@
       g.__reveal = true;
       setDelays(children(g), num(g.dataset.revealStep, STEP), num(g.dataset.revealDelay, 0));
       if (g.dataset.revealGroup === "load") raf2(function () { children(g).forEach(show); });
-      else io.observe(g);
+      else watch(g);
     });
 
     /* samostatné prvky mimo skupín */
@@ -118,7 +143,7 @@
       el.__reveal = true;
       const base = num(el.dataset.revealDelay, 0);
       if (base) el.style.setProperty("--reveal-delay", base + "ms");
-      io.observe(el);
+      watch(el);
     });
   }
 
@@ -147,7 +172,7 @@
       raf2(function () { fresh.forEach(show); });
     } else {
       container.__revealChildren = true;
-      io.observe(container);
+      watch(container);
     }
   }
 
