@@ -83,10 +83,19 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-/* Zámerne BEZ scroll-behavior:smooth — skrolovanie na kotvu si riadi
-   js/main.js vlastným rAF, aby sa dalo nastaviť trvanie aj krivka.
-   Keby tu smooth ostalo, prehliadač by každé window.scrollTo() z toho
-   rAF ešte raz animoval a obe krivky by si liezli do cesty. */
+/* Zámerne BEZ scroll-behavior:smooth — skrolovanie rieši Lenis
+   (js/vendor/lenis.min.js, inicializácia v js/main.js). Keby tu smooth
+   ostalo, prehliadač by každý posun z Lenisu ešte raz animoval sám
+   a obe krivky by si liezli do cesty. */
+
+/* ---------- Lenis — dist/lenis.css 1.3.26, vložené sem, aby nešla
+   ďalšia požiadavka kvôli 500 bajtom ---------- */
+html.lenis,html.lenis body{height:auto}
+.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:clip}
+.lenis [data-lenis-prevent],.lenis [data-lenis-prevent-wheel],.lenis [data-lenis-prevent-touch],
+.lenis [data-lenis-prevent-vertical],.lenis [data-lenis-prevent-horizontal]{overscroll-behavior:contain}
+.lenis.lenis-smooth iframe{pointer-events:none}
+.lenis.lenis-autoToggle{transition-property:overflow;transition-duration:1ms;transition-behavior:allow-discrete}
 /* kotvy z navpillu nesmú skončiť pod sticky headerom (88px v scrollnutom stave) */
 #projekty,#typy,#standard,#ponuka,#lokalita,#galeria,#postup,#kontakt{scroll-margin-top:88px}
 body{
@@ -657,9 +666,16 @@ body.is-menu-open{overflow:hidden}
 }
 .s2__img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:0;transition:opacity .82s ease;
+  opacity:0;transform:scale(1);
+  transition:opacity .82s ease,transform 1.27s var(--ease-soft);
 }
-.s2__img.is-active{opacity:1}
+/* Rast pri prepnutí (podľa here-away.com, sekcia typov ubytovania):
+   prichádzajúca fotka sa počas prelínania zväčšuje na 1,06, odchádzajúca
+   sa vracia na 1 — fotka sa teda „vynára rastom", nie len prelína.
+   Transform beží dlhšie než opacity, takže rast ešte chvíľu dobieha
+   po tom, čo je fotka už plne viditeľná. Rám má overflow:hidden,
+   zväčšenie preto len jemne oreže okraje. */
+.s2__img.is-active{opacity:1;transform:scale(1.06)}
 
 /* Pozície + rozmery fotiek 1:1 podľa Figmy (4:305).
    1-izbové a 2-izbové = 330×330, 1,5-izbové a 3-izbové = 345×345. */

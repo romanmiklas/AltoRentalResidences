@@ -30,6 +30,7 @@ assets/video/
 
 css/main.css
 js/  main.js  motion.js  i18n.js  consent.js
+js/vendor/lenis.min.js        Lenis 1.3.26 (MIT), plynulé skrolovanie
 ```
 
 ## Nasadenie

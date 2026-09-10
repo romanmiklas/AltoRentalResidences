@@ -336,47 +336,46 @@
   });
 
   /* ----------------------------------------------------------
-     SKROLOVANIE NA KOTVU
+     SKROLOVANIE — Lenis + kotvy
 
-     Natívne `scroll-behavior:smooth` znie dobre, ale trvanie aj krivku
-     drží prehliadač — Chrome dojde za ~300 ms bez ohľadu na to, či
-     skáčeme o obrazovku alebo cez celú stránku. Spomaliť sa to nedá,
-     preto vlastný rAF, rovnako ako pri carouseli.
+     Lenis (js/vendor/lenis.min.js) vyhladzuje koliesko: natívny posun
+     ide po krokoch, Lenis ho interpoluje (lerp). Beží nad natívnym
+     scrollom, takže position:sticky, scroll udalosti aj prístupnosť
+     ostávajú, a prefers-reduced-motion rešpektuje sám (lerp 1 = 1:1,
+     programové skoky okamžite).
 
-     Krivka je in-out: pohyb sa rozbieha z nuly. Ease-out štartuje na
-     plnej rýchlosti a práve ten skok pôsobil sekane.
+     Kotvy si riadime sami (anchors:false), lebo Lenis nečíta
+     scroll-margin-top a nevie prekmit. Do lenis.scrollTo() ide vlastná
+     krivka: in-out quart (pohyb sa rozbieha z nuly — ease-out štartuje
+     na plnej rýchlosti a ten skok pôsobil sekane) plus doraz.
 
-     Doraz na konci je prekmit o pár pixelov, ktorý sa vráti späť —
-     váha `w` je na oboch koncoch nulová, takže nikde nevznikne zlom
-     a dojazd sedí presne na cieli. Prekmit je zastropovaný v pixeloch;
-     keby bol percentom z dráhy, pri dlhom skoku by to bol viditeľný
-     poskok. Vychádza z neho asi 11 px, čo je akurát cítiť.
+     Doraz: prekmit o pár pixelov, ktorý sa vráti späť. Váha t^6(1-t)
+     je na oboch koncoch nulová, takže dojazd sedí presne na cieli;
+     vrcholí na 86 % času, kde je hlavná krivka na 99,7 % — skôr by ho
+     pohyb pohltil. Zastropovaný v pixeloch, nie percentom dráhy: pri
+     skoku cez celú stránku by 2 % boli viditeľný poskok.
+
+     Používateľ dojazd preberá kolieskom kedykoľvek (lock:false).
      ---------------------------------------------------------- */
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  const lenis = typeof window.Lenis === "function"
+    ? new window.Lenis({
+        autoRaf: true,
+        lerp: 0.08,            /* predvolených 0,1 — o kúsok mäkší dojazd kolieska */
+        smoothWheel: true,
+        anchors: false,        /* kotvy nižšie */
+        autoToggle: true,      /* overflow:hidden na body (mobilné menu) Lenis zastaví sám */
+      })
+    : null;
 
   /* ease-in-out quart */
   const easeInOutQuart = (t) =>
     t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
 
-  /* Vlna dorazu: t^a(1-t), znormalizovaná na vrchol 1. Exponent určuje,
-     kedy vrchol nastane — a=6 ho posunie na 86 % času, kde je hlavná
-     krivka už na 99,7 %, takže sa prekmit naozaj prejaví. Pri skoršom
-     vrchole ho hlavný pohyb z väčšej časti pohltí. */
   const BUMP_A = 6;
   const BUMP_NORM = Math.pow(BUMP_A / (BUMP_A + 1), BUMP_A) / (BUMP_A + 1);
   const bumpWave = (t) => (Math.pow(t, BUMP_A) * (1 - t)) / BUMP_NORM;
-
-  let scrollRaf = 0;
-  const stopScroll = () => {
-    if (scrollRaf) { cancelAnimationFrame(scrollRaf); scrollRaf = 0; }
-  };
-
-  /* Používateľ musí vedieť dojazd kedykoľvek prevziať — inak ho dlhý
-     posun na sekundu a pol uväzní. Vlastné window.scrollTo() nižšie
-     tieto udalosti nespúšťa, takže sa animácia nezruší sama. */
-  ["wheel", "touchstart", "pointerdown", "keydown"].forEach((ev) =>
-    window.addEventListener(ev, stopScroll, { passive: true })
-  );
 
   function scrollToY(to) {
     const from = window.scrollY;
@@ -384,27 +383,24 @@
     to = Math.max(0, Math.min(to, max));
     const dist = to - from;
 
-    if (reducedMotion.matches || Math.abs(dist) < 2) {
-      stopScroll();
-      window.scrollTo(0, to);
+    if (!lenis || reducedMotion.matches || Math.abs(dist) < 2) {
+      window.scrollTo({ top: to, behavior: lenis ? "auto" : "smooth" });
       return;
     }
-    stopScroll();
 
     /* trvanie podľa dĺžky skoku, nech krátky nezaberie toľko čo dlhý */
-    const dur = Math.min(1600, Math.max(620, Math.abs(dist) * 0.45));
+    const dur = Math.min(1.6, Math.max(0.62, Math.abs(dist) * 0.00045));
     /* pri krátkom skoku by prekmit len vyzeral ako chyba */
-    const bump = Math.abs(dist) > 260
-      ? Math.sign(dist) * Math.min(Math.abs(dist) * 0.02, 14)
-      : 0;
-    const t0 = performance.now();
+    const bump = Math.abs(dist) > 260 ? Math.min(Math.abs(dist) * 0.02, 14) : 0;
+    /* Lenis chce krivku ako podiel dráhy — prekmit preto ako podiel */
+    const over = bump / Math.abs(dist);
 
-    const step = (now) => {
-      const t = Math.min(1, (now - t0) / dur);
-      window.scrollTo(0, from + dist * easeInOutQuart(t) + bump * bumpWave(t));
-      scrollRaf = t < 1 ? requestAnimationFrame(step) : 0;
-    };
-    scrollRaf = requestAnimationFrame(step);
+    lenis.scrollTo(to, {
+      duration: dur,
+      easing: (t) => easeInOutQuart(t) + over * bumpWave(t),
+      lock: false,
+      force: false,
+    });
   }
 
   /* Horná hrana prvku mínus jeho scroll-margin-top — to je tá istá

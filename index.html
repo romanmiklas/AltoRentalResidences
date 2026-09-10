@@ -606,7 +606,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
-  <div class="gal__track" id="galTrack" data-reveal="fade" data-reveal-delay="400">
+  <div class="gal__track" id="galTrack" data-lenis-prevent-horizontal data-reveal="fade" data-reveal-delay="400">
     <figure class="gal__card" data-project="skypark">
       <img src="assets/img/gal-01-skypark-zelen.jpg" alt="SKY PARK — zeleň v areáli" loading="lazy">
       <span class="gal__tag">SKYPARK</span>
@@ -666,7 +666,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </button>
     </div>
   </div>
-  <div class="steps__track" id="stepsTrack" data-reveal-group data-reveal-step="180">
+  <div class="steps__track" id="stepsTrack" data-lenis-prevent-horizontal data-reveal-group data-reveal-step="180">
     <article class="steps__card" data-reveal>
       <div class="steps__upper"><span class="steps__num">1</span><h3>Prvý kontakt</h3></div>
       <p>Ak vás naša ponuka zaujala, stačí nám napísať prostredníctvom formulára nižšie. Kolegovia sa vám čo najskôr ozvú a dohodnú ďalší postup.</p>
@@ -861,6 +861,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="js/i18n.js" defer></script>
 <!-- motion.js musí bežať pred main.js — ponuka bytov si cez ALTO_MOTION
      pýta nábeh práve vykreslených kariet -->
+<script src="js/vendor/lenis.min.js" defer></script>
 <script src="js/motion.js" defer></script>
 <script src="js/main.js" defer></script>
 <script src="js/consent.js" defer></script>
